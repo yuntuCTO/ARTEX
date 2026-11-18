@@ -32,7 +32,7 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
         setRows(r.deliveries);
         setTotal(r.total);
       })
-      .catch((e) => toast.error("Failed to load delivery records: " + (e as Error).message))
+      .catch((e) => toast.error("加载投递记录失败：" + (e as Error).message))
       .finally(() => setLoading(false));
   }, [channelID, state, page]);
   React.useEffect(() => {
@@ -42,10 +42,10 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
   async function retry(id: number) {
     try {
       await api.notifyRetryDelivery(id);
-      toast.success("Re-queued");
+      toast.success("已重新排队");
       load();
     } catch (e) {
-      toast.error("Retry failed: " + (e as Error).message);
+      toast.error("重试失败：" + (e as Error).message);
     }
   }
 
@@ -62,10 +62,10 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
           }}
         >
           <SelectTrigger size="sm" className="w-44">
-            <SelectValue placeholder="All channels" />
+            <SelectValue placeholder="全部渠道" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All channels</SelectItem>
+            <SelectItem value="all">全部渠道</SelectItem>
             {channels.map((c) => (
               <SelectItem key={c.id} value={String(c.id)}>
                 {c.name}
@@ -95,7 +95,7 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
         <Button size="sm" variant="outline" onClick={load} disabled={loading}>
           <RefreshCwIcon className={loading ? "animate-spin" : ""} /> 刷新
         </Button>
-        <span className="text-muted-foreground ml-auto text-xs">{total} in total</span>
+        <span className="text-muted-foreground ml-auto text-xs">{total} 条记录</span>
       </div>
 
       <Card className="py-0">
@@ -104,9 +104,9 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
             <TableRow>
               <TableHead className="w-40">时间</TableHead>
               <TableHead>漏洞</TableHead>
-              <TableHead className="w-40">Channel</TableHead>
+              <TableHead className="w-40">渠道</TableHead>
               <TableHead className="w-24">状态</TableHead>
-              <TableHead className="w-16">Attempts</TableHead>
+              <TableHead className="w-16">尝试次数</TableHead>
               <TableHead>错误</TableHead>
               <TableHead className="w-20" />
             </TableRow>
@@ -115,7 +115,7 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
             {rows.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-muted-foreground py-8 text-center">
-                  {loading ? "Loading…" : "No delivery records"}
+                  {loading ? "加载中…" : "暂无投递记录"}
                 </TableCell>
               </TableRow>
             ) : (
@@ -129,10 +129,10 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
                       <Badge variant="outline" className={toneClasses[statusMeta("severity", d.severity).tone]}>
                         {statusMeta("severity", d.severity).label}
                       </Badge>
-                      <span className="truncate text-sm">{d.title || "(untitled)"}</span>
+                      <span className="truncate text-sm">{d.title || "（无标题）"}</span>
                       {d.event_kind === "finding_status_changed" && (
                         <Badge variant="outline" className="shrink-0">
-                          Status change
+                          状态变更
                         </Badge>
                       )}
                     </div>

@@ -10,12 +10,12 @@ import { cn } from "@/lib/utils";
 
 // Mock demo: no backend SSE, so stuff in a few sample log lines.
 const MOCK_LOGS: LogLine[] = [
-  { seq: 1, ts: "2026-11-14T03:55:00Z", level: "info", tag: "engine", text: "ARTEX v0.6.0 backend listening on :8787 (workers=3)" },
-  { seq: 2, ts: "2026-11-14T03:55:01Z", level: "info", tag: "config", text: "LLM configured from DB: anthropic / claude-opus-4-8" },
-  { seq: 3, ts: "2026-11-14T03:56:10Z", level: "info", tag: "planner", text: "task t-acme-web: planning round 3, generated intent i-4" },
-  { seq: 4, ts: "2026-11-14T03:57:00Z", level: "warn", tag: "guard", text: "block bash: target out of bounds, out.evil.example is not in scope" },
-  { seq: 5, ts: "2026-11-14T03:57:30Z", level: "info", tag: "work#1", text: "report_finding: Default Credentials (high) saved to database" },
-  { seq: 6, ts: "2026-11-14T03:58:20Z", level: "error", tag: "work#3", text: "intercept: mysqldump matched a destructive rule, awaiting manual approval" },
+  { seq: 1, ts: "2026-11-14T03:55:00Z", level: "info", tag: "engine", text: "云途Agent v0.6.0 后端正在监听 :8787（workers=3）" },
+  { seq: 2, ts: "2026-11-14T03:55:01Z", level: "info", tag: "config", text: "已从数据库配置 LLM：anthropic / claude-opus-4-8" },
+  { seq: 3, ts: "2026-11-14T03:56:10Z", level: "info", tag: "planner", text: "任务 t-acme-web：第 3 轮规划，已生成意图 i-4" },
+  { seq: 4, ts: "2026-11-14T03:57:00Z", level: "warn", tag: "guard", text: "阻止 bash：目标越界，out.evil.example 不在范围内" },
+  { seq: 5, ts: "2026-11-14T03:57:30Z", level: "info", tag: "work#1", text: "report_finding：默认凭据（高危）已保存到数据库" },
+  { seq: 6, ts: "2026-11-14T03:58:20Z", level: "error", tag: "work#3", text: "拦截：mysqldump 命中破坏性规则，等待人工审批" },
 ];
 
 const levelTone: Record<LogLine["level"], string> = {
@@ -142,13 +142,13 @@ export default function LogsPage() {
   return (
     <div className="flex flex-1 flex-col gap-3">
       <div>
-        <h1 className="text-xl font-semibold tracking-tight">System logs</h1>
-        <p className="text-muted-foreground text-sm">Live backend log stream (planner / worker / database / traffic …)</p>
+        <h1 className="text-xl font-semibold tracking-tight">系统日志</h1>
+        <p className="text-muted-foreground text-sm">实时后端日志流（规划器 / 执行器 / 数据库 / 流量…）</p>
       </div>
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <Input
-            placeholder="Filter (text / tag)…"
+            placeholder="筛选（文本 / 标签）…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             className="h-8 max-w-xs"
@@ -162,7 +162,7 @@ export default function LogsPage() {
                 className="h-8"
                 onClick={() => setLevel(lv)}
               >
-                {lv === "all" ? "All" : lv}
+                {lv === "all" ? "全部" : lv}
               </Button>
             ))}
           </div>
@@ -172,15 +172,15 @@ export default function LogsPage() {
             className="h-8"
             onClick={() => setPaused((p) => !p)}
           >
-            {paused ? "Paused" : "Pause"}
+            {paused ? "已暂停" : "暂停"}
           </Button>
           <Button size="sm" variant="outline" className="h-8" onClick={() => setLines([])}>
             清除
           </Button>
           <span className="ml-auto text-xs text-muted-foreground">
-            {counts.total} lines ·{" "}
-            <span className="text-amber-600 dark:text-amber-400">{counts.warn} warnings</span> ·{" "}
-            <span className="text-red-600 dark:text-red-400">{counts.error} errors</span>
+            {counts.total} 行 ·{" "}
+            <span className="text-amber-600 dark:text-amber-400">{counts.warn} 条警告</span> ·{" "}
+            <span className="text-red-600 dark:text-red-400">{counts.error} 条错误</span>
           </span>
         </div>
 
@@ -200,12 +200,12 @@ export default function LogsPage() {
                 disabled={loadingHistory}
                 onClick={loadOlderHistory}
               >
-                {loadingHistory ? "Loading…" : "Load older logs"}
+                {loadingHistory ? "加载中…" : "加载更早的日志"}
               </Button>
             </div>
           )}
           {filtered.length === 0 ? (
-            <p className="py-10 text-center text-muted-foreground">No logs yet.</p>
+            <p className="py-10 text-center text-muted-foreground">暂无日志。</p>
           ) : (
             filtered.map((l) => {
               const body =
