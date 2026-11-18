@@ -60,24 +60,24 @@ function scopeValue(row: TaskScopeRow): string {
   if (row.value) return row.value;
   if (row.domain) return row.domain;
   if (row.net) return row.net;
-  if (row.company_id) return row.company_name?.trim() ? row.company_name : `Company #${row.company_id}`;
+  if (row.company_id) return row.company_name?.trim() ? row.company_name : `公司 #${row.company_id}`;
   return "—";
 }
 
 const SCOPE_KIND_LABELS: Record<TaskScopeRow["kind"], string> = {
-  company: "Company",
-  root_domain: "Root domain",
-  subdomain: "Subdomain",
+  company: "公司",
+  root_domain: "根域名",
+  subdomain: "子域名",
   ip: "IP",
   cidr: "CIDR",
   icp: "ICP",
-  keyword: "Keyword",
+  keyword: "关键词",
 };
 
 const SCOPE_SOURCE_LABELS: Record<TaskScopeRow["source"], string> = {
-  auto: "Auto",
-  agent: "Agent",
-  manual: "Manual",
+  auto: "自动",
+  agent: "智能体",
+  manual: "手动",
 };
 
 function StatCard({
@@ -186,7 +186,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       setGoalVuln("");
       await loadGoals();
     } catch (e) {
-      setGoalErr(e instanceof Error ? e.message : "Failed to add");
+      setGoalErr(e instanceof Error ? e.message : "添加失败");
     } finally {
       setGoalBusy(false);
     }
@@ -214,7 +214,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       cancelEditGoal();
       await loadGoals();
     } catch (e) {
-      setGoalErr(e instanceof Error ? e.message : "Failed to save");
+      setGoalErr(e instanceof Error ? e.message : "保存失败");
     } finally {
       setGoalBusy(false);
     }
@@ -248,7 +248,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       setConText("");
       await loadConstraints();
     } catch (e) {
-      setConErr(e instanceof Error ? e.message : "Failed to add");
+      setConErr(e instanceof Error ? e.message : "添加失败");
     } finally {
       setConBusy(false);
     }
@@ -276,7 +276,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       cancelEditConstraint();
       await loadConstraints();
     } catch (e) {
-      setConErr(e instanceof Error ? e.message : "Failed to save");
+      setConErr(e instanceof Error ? e.message : "保存失败");
     } finally {
       setConBusy(false);
     }
@@ -301,7 +301,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       setScopeValueInput("");
       await loadScope();
     } catch (e) {
-      setScopeErr(e instanceof Error ? e.message : "Failed to add");
+      setScopeErr(e instanceof Error ? e.message : "添加失败");
     } finally {
       setScopeBusy(false);
     }
@@ -439,16 +439,16 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <TargetIcon className="size-4 text-primary" /> Task description & goal
+            <TargetIcon className="size-4 text-primary" /> 任务描述与目标
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <div className="text-xs font-medium text-muted-foreground">Description</div>
+            <div className="text-xs font-medium text-muted-foreground">描述</div>
             <p className="text-sm whitespace-pre-wrap break-words">{task?.description?.trim() || "—"}</p>
           </div>
           <div className="flex flex-col gap-1.5">
-            <div className="text-xs font-medium text-muted-foreground">Goal</div>
+            <div className="text-xs font-medium text-muted-foreground">目标</div>
             <p className="text-sm whitespace-pre-wrap break-words">{task?.goal?.trim() || "—"}</p>
           </div>
         </CardContent>
@@ -458,9 +458,9 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <ListChecksIcon className="size-4 text-primary" /> Goal management
+            <ListChecksIcon className="size-4 text-primary" /> 目标管理
             <span className="text-muted-foreground text-xs font-normal">
-              (final verifiable goals, {goals.length} in total; adds/edits notify the planner and revive the task)
+              （最终可验证的目标，共 {goals.length} 个；添加或编辑会通知规划器并重新激活任务）
             </span>
           </CardTitle>
         </CardHeader>
@@ -469,7 +469,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
           <div className="flex flex-wrap items-center gap-2">
             <Input
               className="h-7 min-w-56 flex-1 text-sm"
-              placeholder="Add a goal, e.g. 'gain unauthorized access with an admin account'"
+              placeholder="添加目标，例如：'使用管理员账户获取未授权访问权限'"
               value={goalText}
               onChange={(e) => setGoalText(e.target.value)}
               onKeyDown={(e) => {
@@ -479,7 +479,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
             />
             <Input
               className="h-7 w-32 text-sm"
-              placeholder="Vulnerability class (optional)"
+              placeholder="漏洞类别（可选）"
               value={goalVuln}
               onChange={(e) => setGoalVuln(e.target.value)}
               onKeyDown={(e) => {
@@ -488,7 +488,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={goalBusy}
             />
             <Button size="sm" variant="outline" disabled={goalBusy || !goalText.trim()} onClick={() => void addGoal()}>
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {goalErr && <span className="text-xs text-red-500">{goalErr}</span>}
           </div>
@@ -511,7 +511,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                     />
                     <Input
                       className="h-7 w-32 text-sm"
-                      placeholder="Vulnerability class (optional)"
+                      placeholder="漏洞类别（可选）"
                       value={editVuln}
                       onChange={(e) => setEditVuln(e.target.value)}
                       onKeyDown={(e) => {
@@ -571,7 +571,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               )}
             </div>
           ) : (
-            <p className="text-muted-foreground text-sm">No goals yet. Once added, the planner dispatches exploration intents from them and judges completion.</p>
+            <p className="text-muted-foreground text-sm">暂无目标。添加后，规划器将根据目标分派探索意图并判断完成情况。</p>
           )}
         </CardContent>
       </Card>
@@ -581,9 +581,9 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldAlertIcon className="size-4 text-amber-500" /> Operation constraints
+            <ShieldAlertIcon className="size-4 text-amber-500" /> 操作约束
             <span className="text-muted-foreground text-xs font-normal">
-              (bounds planner/worker exploration, {constraints.length} in total; changes take effect at the next planning round)
+              （限制规划器/执行器的探索范围，共 {constraints.length} 条；更改在下一轮规划时生效）
             </span>
           </CardTitle>
         </CardHeader>
@@ -595,12 +595,12 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               value={conKind}
               onChange={(e) => setConKind(e.target.value as TaskConstraint["kind"])}
             >
-              <NativeSelectOption value="deny">Deny</NativeSelectOption>
-              <NativeSelectOption value="allow">Allow</NativeSelectOption>
+              <NativeSelectOption value="deny">拒绝</NativeSelectOption>
+              <NativeSelectOption value="allow">允许</NativeSelectOption>
             </NativeSelect>
             <Input
               className="h-7 min-w-56 flex-1 text-sm"
-              placeholder="One operation constraint, e.g. 'test only the current port, do not scan other ports'"
+              placeholder="操作约束，例如：'仅测试当前端口，不扫描其他端口'"
               value={conText}
               onChange={(e) => setConText(e.target.value)}
               onKeyDown={(e) => {
@@ -614,7 +614,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={conBusy || !conText.trim()}
               onClick={() => void addConstraint()}
             >
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {conErr && <span className="text-xs text-red-500">{conErr}</span>}
           </div>
@@ -629,8 +629,8 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                       value={editConKind}
                       onChange={(e) => setEditConKind(e.target.value as TaskConstraint["kind"])}
                     >
-                      <NativeSelectOption value="deny">Deny</NativeSelectOption>
-                      <NativeSelectOption value="allow">Allow</NativeSelectOption>
+                      <NativeSelectOption value="deny">拒绝</NativeSelectOption>
+                      <NativeSelectOption value="allow">允许</NativeSelectOption>
                     </NativeSelect>
                     <Input
                       className="h-7 min-w-56 flex-1 text-sm"
@@ -671,7 +671,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                           : "bg-red-500/15 text-red-600 dark:text-red-400"
                       }`}
                     >
-                      {c.kind === "allow" ? "Allow" : "Deny"}
+                      {c.kind === "allow" ? "允许" : "拒绝"}
                     </span>
                     <span className="min-w-0 flex-1 break-words">{c.text}</span>
                     <Button
@@ -698,7 +698,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
             </div>
           ) : (
             <p className="text-muted-foreground text-sm">
-              No operation constraints yet. They are extracted automatically from the description/goal at task creation; you can also add, edit, or delete them here to bound which operations are allowed/denied.
+              暂无操作约束。创建任务时会从描述/目标中自动提取；也可在此添加、编辑或删除约束，以限定允许或拒绝的操作。
             </p>
           )}
         </CardContent>
@@ -708,8 +708,8 @@ export function OverviewTab({ taskId }: { taskId: string }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
-              <TargetIcon className="size-4 text-emerald-500" /> Asset test coverage
-              <span className="text-muted-foreground text-xs font-normal">(rough estimate, for reference only)</span>
+              <TargetIcon className="size-4 text-emerald-500" /> 资产测试覆盖
+              <span className="text-muted-foreground text-xs font-normal">（粗略估算，仅供参考）</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
@@ -718,7 +718,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                 {coverage.pct != null ? Math.round(coverage.pct * 100) + "%" : "—"}
               </span>
               <span className="text-muted-foreground text-sm">
-                Tested {coverage.tested} / in scope {coverage.denominator}
+                已测试 {coverage.tested} / 范围内 {coverage.denominator}
               </span>
             </div>
             {coverage.pct != null && <Progress value={Math.round(coverage.pct * 100)} />}
@@ -739,7 +739,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
             )}
             {coverage.gaps && (
               <div className="text-xs">
-                <span className="font-medium">Coverage gaps: {coverage.gaps.length}</span>
+                <span className="font-medium">覆盖缺口： {coverage.gaps.length}</span>
                 <ul className="text-muted-foreground mt-1 list-disc pl-4">
                   {coverage.gaps.map((g, i) => (
                     <li key={i}>
@@ -757,9 +757,9 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <CoinsIcon className="size-4 text-amber-500" /> LLM token usage
+            <CoinsIcon className="size-4 text-amber-500" /> LLM token 用量
             <span className="text-muted-foreground text-xs font-normal">
-              (per model{tokenTotals.calls > 0 ? `, ${tokenTotals.calls} calls in total` : ""})
+              （按模型{tokenTotals.calls > 0 ? `, ${tokenTotals.calls} 次调用` : ""})
             </span>
           </CardTitle>
         </CardHeader>
@@ -769,19 +769,19 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               {/* Totals overview */}
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Input </span>
+                  <span className="text-muted-foreground">输入 </span>
                   <span className="font-semibold">{fmtTokens(tokenTotals.input)}</span>
                 </span>
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Output </span>
+                  <span className="text-muted-foreground">输出 </span>
                   <span className="font-semibold">{fmtTokens(tokenTotals.output)}</span>
                 </span>
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Cache read </span>
+                  <span className="text-muted-foreground">缓存读取 </span>
                   <span className="font-semibold">{fmtTokens(tokenTotals.cacheRead)}</span>
                 </span>
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Cache hit rate </span>
+                  <span className="text-muted-foreground">缓存命中率 </span>
                   <span className="font-semibold text-emerald-500">
                     {cacheHitRate(tokenTotals.cacheRead, tokenTotals.input)}
                   </span>
@@ -792,12 +792,12 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-muted-foreground border-b text-left text-xs">
-                      <th className="py-1.5 pr-3 font-medium">Model</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Calls</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Input</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Output</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Cache read</th>
-                      <th className="py-1.5 text-right font-medium">Hit rate</th>
+                      <th className="py-1.5 pr-3 font-medium">模型</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">调用次数</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">输入</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">输出</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">缓存读取</th>
+                      <th className="py-1.5 text-right font-medium">命中率</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -820,7 +820,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               </div>
             </>
           ) : (
-            <p className="text-muted-foreground text-sm">No LLM usage yet (the task has made no calls, or records are still being written).</p>
+            <p className="text-muted-foreground text-sm">暂无 LLM 用量（任务尚未调用，或记录仍在写入中）。</p>
           )}
         </CardContent>
       </Card>
@@ -828,9 +828,9 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheckIcon className="size-4 text-emerald-500" /> Test scope
+            <ShieldCheckIcon className="size-4 text-emerald-500" /> 测试范围
             <span className="text-muted-foreground text-xs font-normal">
-              (coverage scope, not enforced, {scope.length} in total)
+              （覆盖范围，不强制执行，共 {scope.length} 项）
             </span>
           </CardTitle>
         </CardHeader>
@@ -842,26 +842,26 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               value={scopeKind}
               onChange={(e) => setScopeKind(e.target.value as TaskScopeRow["kind"])}
             >
-              <NativeSelectOption value="root_domain">Root domain</NativeSelectOption>
-              <NativeSelectOption value="subdomain">Subdomain</NativeSelectOption>
+              <NativeSelectOption value="root_domain">根域名</NativeSelectOption>
+              <NativeSelectOption value="subdomain">子域名</NativeSelectOption>
               <NativeSelectOption value="ip">IP</NativeSelectOption>
               <NativeSelectOption value="cidr">CIDR</NativeSelectOption>
               <NativeSelectOption value="icp">ICP</NativeSelectOption>
-              <NativeSelectOption value="keyword">Keyword</NativeSelectOption>
-              <NativeSelectOption value="company">Company</NativeSelectOption>
+              <NativeSelectOption value="keyword">关键字</NativeSelectOption>
+              <NativeSelectOption value="company">公司</NativeSelectOption>
             </NativeSelect>
             <Input
               className="h-7 w-56 text-sm"
               placeholder={
                 scopeKind === "company"
-                  ? "Company name or id"
+                  ? "公司名称或 ID"
                   : scopeKind === "ip" || scopeKind === "cidr"
-                    ? "e.g. 10.0.0.1 or 10.0.0.0/24"
+                    ? "例如 10.0.0.1 或 10.0.0.0/24"
                     : scopeKind === "icp"
-                      ? "e.g. Beijing ICP No.12345678-1"
+                      ? "例如 京 ICP 备 12345678 号-1"
                       : scopeKind === "keyword"
-                        ? "e.g. a company-name keyword"
-                        : "e.g. example.com"
+                        ? "例如 公司名称关键词"
+                        : "例如 example.com"
               }
               value={scopeValueInput}
               onChange={(e) => setScopeValueInput(e.target.value)}
@@ -876,7 +876,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={scopeBusy || !scopeValueInput.trim()}
               onClick={() => void addScope()}
             >
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {scopeErr && <span className="text-xs text-red-500">{scopeErr}</span>}
           </div>
@@ -900,13 +900,13 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                       <Trash2Icon className="size-3.5 text-red-500" />
                     </Button>
                   ) : (
-                    <span className="text-muted-foreground shrink-0 text-xs">Inherited</span>
+                    <span className="text-muted-foreground shrink-0 text-xs">继承</span>
                   )}
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground text-sm">No test scope yet; once added it serves as the asset coverage denominator.</p>
+            <p className="text-muted-foreground text-sm">暂无测试范围；添加后将作为资产覆盖的统计基数。</p>
           )}
         </CardContent>
       </Card>
@@ -914,12 +914,12 @@ export function OverviewTab({ taskId }: { taskId: string }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <ActivityIcon className="size-4 text-blue-500" /> Heartbeat
+            <ActivityIcon className="size-4 text-blue-500" /> 心跳
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div>
-            <div className="text-xs text-muted-foreground">Engine state</div>
+            <div className="text-xs text-muted-foreground">引擎状态</div>
             <StatusBadge
               domain="engine"
               value={stats?.engine_mode ?? task?.engine_mode ?? "idle"}
@@ -928,11 +928,11 @@ export function OverviewTab({ taskId }: { taskId: string }) {
             />
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Running workers</div>
+            <div className="text-xs text-muted-foreground">运行中的执行器</div>
             <div className="mt-1 text-lg font-semibold tabular-nums">{running.length}</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Last activity</div>
+            <div className="text-xs text-muted-foreground">最近活动</div>
             <div className="mt-1 inline-flex items-center gap-1 text-sm">
               <ClockIcon className="size-3.5" />
               {task?.last_activity ? new Date(task.last_activity).toLocaleTimeString("zh-CN") : "—"}
@@ -940,13 +940,13 @@ export function OverviewTab({ taskId }: { taskId: string }) {
           </div>
           <div>
             <div className="text-xs text-muted-foreground">
-              Goals {task?.goals_met ?? 0}/{task?.goals_total ?? 0}
+              目标 {task?.goals_met ?? 0}/{task?.goals_total ?? 0}
             </div>
             <Progress value={goalsPct} className="mt-2" />
           </div>
           {task?.completed_unix && task.completed_unix > 0 ? (
             <div>
-              <div className="text-xs text-muted-foreground">Completed at</div>
+              <div className="text-xs text-muted-foreground">完成时间</div>
               <div className="mt-1 inline-flex items-center gap-1 text-sm">
                 <ClockIcon className="size-3.5" />
                 {new Date(task.completed_unix * 1000).toLocaleString("zh-CN")}
@@ -961,7 +961,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm">
-              <TargetIcon className="size-4" /> Running intents
+              <TargetIcon className="size-4" /> 运行中的意图
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
@@ -971,32 +971,32 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                 <span className="min-w-0 flex-1 truncate">{i.payload}</span>
               </div>
             ))}
-            {running.length === 0 && <p className="text-sm text-muted-foreground">No running intents</p>}
+            {running.length === 0 && <p className="text-sm text-muted-foreground">暂无运行中的意图</p>}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm">
-              <AlertTriangleIcon className="size-4 text-amber-500" /> Needs attention
+              <AlertTriangleIcon className="size-4 text-amber-500" /> 需要关注
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <div className="text-2xl font-semibold tabular-nums text-red-600">{taskFindings.length}</div>
-              <div className="text-xs text-muted-foreground">Confirmed vulnerabilities</div>
+              <div className="text-xs text-muted-foreground">已确认漏洞</div>
             </div>
             <div>
               <div className="text-2xl font-semibold tabular-nums text-blue-600">{running.length}</div>
-              <div className="text-xs text-muted-foreground">Running</div>
+              <div className="text-xs text-muted-foreground">运行中</div>
             </div>
             <div>
               <div className="text-2xl font-semibold tabular-nums">{open.length}</div>
-              <div className="text-xs text-muted-foreground">frontier open</div>
+              <div className="text-xs text-muted-foreground">待探索</div>
             </div>
             <div>
               <div className="text-2xl font-semibold tabular-nums text-red-600">{blocked.length}</div>
-              <div className="text-xs text-muted-foreground">Blocked intents</div>
+              <div className="text-xs text-muted-foreground">受阻意图</div>
             </div>
           </CardContent>
         </Card>
@@ -1004,7 +1004,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-sm">
-              <BugIcon className="size-4 text-red-500" /> Recent findings
+              <BugIcon className="size-4 text-red-500" /> 最近漏洞
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
@@ -1014,7 +1014,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                 <span className="min-w-0 flex-1 truncate">{f.summary}</span>
               </div>
             ))}
-            {taskFindings.length === 0 && <p className="text-sm text-muted-foreground">No findings yet</p>}
+            {taskFindings.length === 0 && <p className="text-sm text-muted-foreground">暂无漏洞</p>}
           </CardContent>
         </Card>
       </div>
@@ -1025,12 +1025,12 @@ export function OverviewTab({ taskId }: { taskId: string }) {
         <Card className="border-red-500/30">
           <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
             <CardTitle className="flex items-center gap-2 text-sm">
-              <AlertTriangleIcon className="size-4 text-red-500" /> Blocked/errored intents
-              <span className="text-xs font-normal text-muted-foreground">({blocked.length} in total, re-runnable)</span>
+              <AlertTriangleIcon className="size-4 text-red-500" /> 受阻/出错的意图
+              <span className="text-xs font-normal text-muted-foreground">({blocked.length} 个，可重新运行）</span>
             </CardTitle>
             <Button size="sm" variant="outline" disabled={rerunning.has("__all__")} onClick={() => void rerunAll()}>
               <RefreshCwIcon className={`size-3.5 ${rerunning.has("__all__") ? "animate-spin" : ""}`} />
-              Re-run all
+              全部重新运行
             </Button>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
@@ -1046,13 +1046,13 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                   onClick={() => void rerunOne(i.id)}
                 >
                   <RefreshCwIcon className={`size-3 ${rerunning.has(i.id) ? "animate-spin" : ""}`} />
-                  Re-run
+                  重新运行
                 </Button>
               </div>
             ))}
             {blocked.length > 20 && (
               <p className="text-xs text-muted-foreground">
-                Only the first 20 are shown; click "Re-run all" to handle the remaining {blocked.length - 20}.
+                仅显示前 20 项；点击“全部重新运行”处理剩余 {blocked.length - 20}.
               </p>
             )}
           </CardContent>
@@ -1061,21 +1061,21 @@ export function OverviewTab({ taskId }: { taskId: string }) {
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-        <StatCard label="Open intents" value={open.length} icon={ShieldCheckIcon} sub="frontier open" />
-        <StatCard label="Confirmed findings" value={taskFindings.length} icon={BugIcon} sub="this task" />
-        <StatCard label="Total intents" value={intents.length} icon={AlertTriangleIcon} sub="all intents of this task" />
+        <StatCard label="待处理意图" value={open.length} icon={ShieldCheckIcon} sub="待探索" />
+        <StatCard label="已确认漏洞" value={taskFindings.length} icon={BugIcon} sub="当前任务" />
+        <StatCard label="意图总数" value={intents.length} icon={AlertTriangleIcon} sub="当前任务的全部意图" />
       </div>
     </div>
   );
 }
 
 const TASK_RULE_KIND_OPTIONS: { value: AssetInterceptKind; label: string; placeholder: string }[] = [
-  { value: "exact_domain", label: "Domain (exact)", placeholder: "example.gov.cn" },
-  { value: "exact_ip", label: "IP (exact)", placeholder: "203.0.113.10" },
-  { value: "exact_url", label: "URL (exact)", placeholder: "https://example.com/login" },
-  { value: "fuzzy_domain", label: "Domain (fuzzy)", placeholder: ".gov.cn" },
-  { value: "fuzzy_ip", label: "IP (fuzzy)", placeholder: "203.0.113." },
-  { value: "fuzzy_url", label: "URL (fuzzy)", placeholder: "/admin" },
+  { value: "exact_domain", label: "域名（精确）", placeholder: "example.gov.cn" },
+  { value: "exact_ip", label: "IP（精确）", placeholder: "203.0.113.10" },
+  { value: "exact_url", label: "URL（精确）", placeholder: "https://example.com/login" },
+  { value: "fuzzy_domain", label: "域名（模糊）", placeholder: ".gov.cn" },
+  { value: "fuzzy_ip", label: "IP（模糊）", placeholder: "203.0.113." },
+  { value: "fuzzy_url", label: "URL（模糊）", placeholder: "/admin" },
   { value: "cidr", label: "CIDR", placeholder: "192.168.0.0/16" },
 ];
 
@@ -1187,9 +1187,9 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <ShieldCheckIcon className="size-4 text-sky-500" /> Task-level asset intercept / allow
+          <ShieldCheckIcon className="size-4 text-sky-500" /> 任务级资产拦截 / 允许
           <span className="text-muted-foreground text-xs font-normal">
-            (this task only, never global; block rules evaluate before allow rules, {rules.length} in total)
+            （仅此任务，不影响全局；阻止规则优先于允许规则，共 {rules.length} 项）
           </span>
         </CardTitle>
       </CardHeader>
@@ -1197,8 +1197,8 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
         {/* Add form */}
         <div className="flex flex-wrap items-center gap-2">
           <NativeSelect size="sm" value={newAction} onChange={(e) => setNewAction(e.target.value as "block" | "allow")}>
-            <NativeSelectOption value="block">Block</NativeSelectOption>
-            <NativeSelectOption value="allow">Allow</NativeSelectOption>
+            <NativeSelectOption value="block">阻止</NativeSelectOption>
+            <NativeSelectOption value="allow">允许</NativeSelectOption>
           </NativeSelect>
           <NativeSelect size="sm" value={newKind} onChange={(e) => setNewKind(e.target.value as AssetInterceptKind)}>
             {TASK_RULE_KIND_OPTIONS.map((o) => (
@@ -1219,13 +1219,13 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
           />
           <Input
             className="h-7 w-36 text-sm"
-            placeholder="Note (optional)"
+            placeholder="备注（可选）"
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             disabled={busy}
           />
           <Button size="sm" variant="outline" disabled={busy || !newPattern.trim()} onClick={() => void add()}>
-            <PlusIcon className="size-3.5" /> Add
+            <PlusIcon className="size-3.5" /> 添加
           </Button>
           {err && <span className="text-xs text-red-500">{err}</span>}
         </div>
@@ -1240,8 +1240,8 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
                     value={editAction}
                     onChange={(e) => setEditAction(e.target.value as "block" | "allow")}
                   >
-                    <NativeSelectOption value="block">Block</NativeSelectOption>
-                    <NativeSelectOption value="allow">Allow</NativeSelectOption>
+                    <NativeSelectOption value="block">阻止</NativeSelectOption>
+                    <NativeSelectOption value="allow">允许</NativeSelectOption>
                   </NativeSelect>
                   <NativeSelect
                     size="sm"
@@ -1267,7 +1267,7 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
                   />
                   <Input
                     className="h-7 w-36 text-sm"
-                    placeholder="Note (optional)"
+                    placeholder="备注（可选）"
                     value={editNote}
                     onChange={(e) => setEditNote(e.target.value)}
                     disabled={busy}
@@ -1300,7 +1300,7 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
                         : "bg-red-500/15 text-red-600 dark:text-red-400"
                     }`}
                   >
-                    {r.action === "allow" ? "Allow" : "Block"}
+                    {r.action === "allow" ? "允许" : "阻止"}
                   </span>
                   <span className="text-muted-foreground shrink-0 text-xs">{TASK_RULE_KIND_LABEL[r.kind]}</span>
                   <code className="bg-muted min-w-0 flex-1 truncate rounded px-1.5 py-0.5 text-xs">{r.pattern}</code>
@@ -1332,7 +1332,7 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
           </div>
         ) : (
           <p className="text-muted-foreground text-sm">
-            No task-level rules. A "Block" hit forbids testing; "Allow" is a whitelist — once configured, this task only permits assets that match an allow rule (no whitelist when unconfigured).
+            暂无任务级规则。命中“阻止”规则将禁止测试；“允许”是白名单——配置后，此任务仅允许测试匹配允许规则的资产（未配置时不启用白名单）。
           </p>
         )}
       </CardContent>

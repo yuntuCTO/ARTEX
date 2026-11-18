@@ -42,9 +42,9 @@ export function FindingRetestDialog({ findingId, findingName, onClose, onStarted
       const result = await api.startFindingRetest(findingId, notes.trim());
       onStarted?.(result.retest);
       onClose();
-      toast.success(result.created ? "Retest started; click 'Retesting' to view the session" : "This vulnerability is already being retested; view the existing session");
+      toast.success(result.created ? "复测已开始，点击“复测中”查看会话" : "该漏洞已在复测中，请查看现有会话");
     } catch (e) {
-      toast.error(`Failed to start retest: ${(e as Error).message}`);
+      toast.error(`启动复测失败：${(e as Error).message}`);
     } finally {
       submitLock.current = false;
       setSubmitting(false);
@@ -55,16 +55,16 @@ export function FindingRetestDialog({ findingId, findingName, onClose, onStarted
     <Dialog open onOpenChange={(open) => !open && !submitLock.current && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Retest vulnerability #{findingId}</DialogTitle>
+          <DialogTitle>复测漏洞 #{findingId}</DialogTitle>
           <DialogDescription className="break-words">
             {findingName ? <span className="mb-2 block">{findingName}</span> : null}
-            Retest Agent
-            Reads the original evidence and test constraints, then runs targeted verification in a separate session. When the retest completes successfully and confirms the fix, the vulnerability status automatically becomes "Fixed"; other verdicts keep the current status.
+            复测智能体
+            读取原始证据和测试约束，然后在独立会话中进行定向验证。复测成功完成并确认已修复时，漏洞状态会自动变为“已修复”；其他结论保持当前状态。
           </DialogDescription>
         </DialogHeader>
         <FieldGroup>
           <Field data-disabled={submitting}>
-            <FieldLabel htmlFor={notesId}>Notes (optional)</FieldLabel>
+            <FieldLabel htmlFor={notesId}>备注（可选）</FieldLabel>
             <Textarea
               id={notesId}
               value={notes}
@@ -72,18 +72,18 @@ export function FindingRetestDialog({ findingId, findingName, onClose, onStarted
               rows={4}
               disabled={submitting}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. verify the original endpoint with the original test account; fix version is v2."
+              placeholder="例如：使用原测试账号验证原接口；修复版本为 v2。"
             />
-            <FieldDescription>Add the fix version, test conditions, or limitations of this run.</FieldDescription>
+            <FieldDescription>补充修复版本、测试条件或本次运行的限制。</FieldDescription>
           </Field>
         </FieldGroup>
         <DialogFooter>
           <Button variant="outline" disabled={submitting} onClick={onClose}>
-            Cancel
+            取消
           </Button>
           <Button disabled={submitting} onClick={() => void start()}>
             {submitting ? <Spinner data-icon="inline-start" /> : <RotateCcwIcon data-icon="inline-start" />}
-            {submitting ? "Creating…" : "Start retest"}
+            {submitting ? "创建中…" : "开始复测"}
           </Button>
         </DialogFooter>
       </DialogContent>

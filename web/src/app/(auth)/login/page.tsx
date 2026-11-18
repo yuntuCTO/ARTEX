@@ -55,24 +55,24 @@ export default function LoginPage() {
       .then(({ initialized }) => {
         if (!initialized) router.replace("/setup");
       })
-      .catch(() => setError("Unable to connect to the backend service"))
+      .catch(() => setError("无法连接到后端服务"))
       .finally(() => setChecking(false));
   }, [router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!agreed) {
-      setError("Please read and agree to the Terms of Use first");
+      setError("请先阅读并同意使用条款");
       return;
     }
     setLoading(true);
     setError("");
     try {
-      const { token } = await api.login("ARTEX", password);
+      const { token } = await api.login("云途Agent", password);
       auth.setToken(token);
       window.location.replace("/function/tasks");
     } catch {
-      setError("Incorrect username or password");
+      setError("用户名或密码错误");
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export default function LoginPage() {
   if (checking) {
     return (
       <div role="status" className="flex min-h-dvh items-center justify-center text-muted-foreground">
-        Checking login state…
+        正在检查登录状态…
       </div>
     );
   }
@@ -95,7 +95,7 @@ export default function LoginPage() {
           <div className="absolute size-60 rounded-full border border-primary-foreground/15" />
           <div className="absolute size-40 rounded-full border border-primary-foreground/20" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="ARTEX" width={160} height={160} className="relative brightness-0 invert" />
+          <img src="/logo.png" alt="云途Agent" width={160} height={160} className="relative" />
         </div>
       </div>
 
@@ -103,22 +103,22 @@ export default function LoginPage() {
       <div className="flex w-full items-center justify-center bg-background p-8 lg:w-2/3">
         <div className="w-full max-w-md space-y-10 py-24 lg:py-32">
           <div className="space-y-4 text-center">
-            <h2 className="text-2xl font-medium tracking-tight">Sign in</h2>
-            <p className="mx-auto max-w-xl text-muted-foreground">Welcome back — enter your password to continue using ARTEX</p>
+            <h2 className="text-2xl font-medium tracking-tight">登录</h2>
+            <p className="mx-auto max-w-xl text-muted-foreground">欢迎回来 — 输入密码以继续使用云途Agent</p>
           </div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" value="ARTEX" readOnly className="bg-muted text-muted-foreground" />
+              <Label htmlFor="username">用户名</Label>
+              <Input id="username" value="云途Agent" readOnly className="bg-muted text-muted-foreground" />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">密码</Label>
               <Input
                 id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="请输入密码"
                 autoFocus
                 autoComplete="current-password"
               />
@@ -131,19 +131,19 @@ export default function LoginPage() {
                 className="mt-0.5"
               />
               <Label htmlFor="agree-terms" className="text-sm font-normal leading-relaxed text-muted-foreground">
-                I have read and agree to
+                我已阅读并同意
                 <button
                   type="button"
                   onClick={() => setTermsOpen(true)}
                   className="mx-0.5 font-medium text-primary underline-offset-4 hover:underline"
                 >
-                  Terms of Use
+                  《使用条款》
                 </button>
               </Label>
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading || !password || !agreed}>
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "正在登录…" : "登录"}
             </Button>
           </form>
         </div>
@@ -156,9 +156,9 @@ export default function LoginPage() {
               <ShieldCheck className="size-5" />
             </div>
             <div className="space-y-0.5">
-              <DialogTitle className="text-base">ARTEX Terms of Use and Disclaimer</DialogTitle>
+              <DialogTitle className="text-base">云途Agent 使用条款与免责声明</DialogTitle>
               <p className="text-xs text-muted-foreground">
-                Version v1.1 · Effective 2026-10-11 · Please read all the following terms in full before signing in
+                版本 v1.1 · 生效日期 2026-10-11 · 登录前请完整阅读以下全部条款
               </p>
             </div>
           </DialogHeader>
@@ -169,11 +169,11 @@ export default function LoginPage() {
             className="max-h-[60vh] space-y-5 overflow-y-auto px-6 py-5 text-sm leading-relaxed text-muted-foreground"
           >
             <p className="rounded-lg border bg-muted/40 p-3 text-foreground/80">
-              This Terms of Use and Disclaimer (the "Statement") is the agreement between you and the ARTEX
-              project authors and contributors regarding your use of this software. Please read it carefully and fully understand each provision before use, especially the disclaimer, liability-limitation, and prohibition clauses highlighted in bold or color blocks.
+              本使用条款与免责声明（下称"本声明"）是您与云途Agent
+              项目作者及贡献者之间就您使用本软件所达成的协议。使用前请仔细阅读并充分理解各项条款，尤其是以加粗或色块标出的免责声明、责任限制与禁止行为条款。
               <span className="font-medium text-foreground">
                 {" "}
-                Once you download, install, access, or use this software in any way, you are deemed to have read, understood, and agreed to be bound by all of this Statement.
+                您一旦下载、安装、访问或以任何方式使用本软件，即视为已阅读、理解并同意受本声明全部内容的约束。
               </span>
             </p>
 
@@ -182,12 +182,11 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   1
                 </span>
-                Article 1 · Definitions and Open-Source License
+                第一条 · 定义与开源许可
               </h4>
               <p className="pl-7">
-                This software (ARTEX) is an open-source program released under the GNU Affero General Public License
-                v3.0 (AGPL-3.0). You may freely use, copy, modify, and distribute it under that license; however, any derivative work (including online services provided to third parties over a network) must likewise be open-sourced under
-                the AGPL-3.0 license with the complete corresponding source code made public to its users. The full AGPL-3.0 terms are governed by the accompanying LICENSE file.
+                本软件（云途Agent）是基于 GNU Affero 通用公共许可证
+                v3.0（AGPL-3.0）发布的开源程序。您可以在该许可下自由使用、复制、修改和分发；但任何衍生作品（包括通过网络向第三方提供的在线服务）同样必须以 AGPL-3.0 许可开源，并向其用户公开完整的对应源代码。AGPL-3.0 完整条款以随附的 LICENSE 文件为准。
               </p>
             </section>
 
@@ -196,10 +195,10 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   2
                 </span>
-                Article 2 · Permitted Scope of Use
+                第二条 · 允许的使用范围
               </h4>
               <p className="pl-7">
-                This software is a security-testing platform. You may use it for: personal study, code research, and technical verification in environments you set up yourself; security testing of systems you own; security testing of third-party systems when you hold the owner's explicit authorization; and testing within the written scope of a bug bounty or vulnerability disclosure program, in compliance with that program's rules of engagement. You are responsible for obtaining and keeping proof of authorization, for staying inside the authorized scope, and for the safety and proportionality of every action the software takes on your behalf.
+                本软件是一个安全测试平台。您可以将其用于：在自己搭建的环境中进行个人学习、代码研究和技术验证；对自有系统进行安全测试；在获得系统所有者明确授权的情况下对第三方系统进行安全测试；以及在漏洞赏金或漏洞披露计划书面范围内、遵守其交战规则进行的测试。您有责任取得并保留授权证明，始终处于授权范围内，并确保软件代您执行的每一项操作安全且适度。
               </p>
             </section>
 
@@ -209,15 +208,15 @@ export default function LoginPage() {
                   3
                 </span>
                 <AlertTriangle className="size-4" />
-                Article 3 · Prohibited Conduct
+                第三条 · 禁止行为
               </h4>
               <ul className="ml-7 list-decimal space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3 pl-8 text-foreground/80 marker:text-destructive/70">
                 <li>
-                  Strictly forbidden: scanning, probing, exploiting, or attacking any system whose owner has not explicitly authorized you to test it, or exceeding the authorized scope or a program's rules of engagement once granted;
+                  严禁：扫描、探测、利用或攻击任何未获得所有者明确授权的系统，或在获得授权后超出授权范围或计划交战规则的行为；
                 </li>
-                <li>Strictly forbidden: using this software for illegal intrusion, data theft, extortion, denial of service (DoS/DDoS), or any destructive or criminal activity;</li>
-                <li>Strictly forbidden: removing, tampering with, or circumventing any copyright, license, or security notice in this software or its output;</li>
-                <li>Strictly forbidden: engaging in any conduct that violates the laws, regulations, or regulatory rules of your country or region.</li>
+                <li>严禁：利用本软件进行非法入侵、数据窃取、敲诈勒索、拒绝服务（DoS/DDoS）或任何破坏性、犯罪性活动；</li>
+                <li>严禁：删除、篡改或规避本软件及其输出中的任何版权、许可或安全声明；</li>
+                <li>严禁：从事任何违反您所在国家或地区法律、法规或监管规定的行为。</li>
               </ul>
             </section>
 
@@ -226,11 +225,11 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   4
                 </span>
-                Article 4 · Intellectual Property
+                第四条 · 知识产权
               </h4>
               <p className="pl-7">
-                The copyright and related intellectual property of this software belong to the project authors and contributors, who grant
-                you the corresponding rights within the scope of the AGPL-3.0 license. Beyond the rights expressly granted by that license, this Statement grants you no other rights, expressly or by implication.
+                本软件的版权及相关知识产权归项目作者和贡献者所有，他们在
+                AGPL-3.0 许可范围内授予您相应权利。除该许可明确授予的权利外，本声明不以明示或默示方式授予您任何其他权利。
               </p>
             </section>
 
@@ -239,10 +238,10 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   5
                 </span>
-                Article 5 · Data and Privacy
+                第五条 · 数据与隐私
               </h4>
               <p className="pl-7">
-                This software is a self-deployable open-source program; the authors run no centralized service and neither collect nor upload your usage data. All data you generate, process, or touch while using it stays under your control, and you are responsible for its legality and security; any consequence of improper data handling is yours to bear.
+                本软件是可自行部署的开源程序；作者不运营任何中心化服务，不收集也不上传您的使用数据。您在使用过程中产生、处理或接触的所有数据均由您自行掌控，您对其合法性与安全性负责；因数据处理不当产生的任何后果由您自行承担。
               </p>
             </section>
 
@@ -251,13 +250,13 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   6
                 </span>
-                Article 6 · Compliance and Legal Liability
+                第六条 · 合规与法律责任
               </h4>
               <p className="pl-7">
-                You must comply on your own with all laws and regulations of your country or region on cybersecurity, data security and personal-information protection, computer crime, and the like (for example, laws on unauthorized access to computer systems, on personal-data protection, and on the responsibilities of security researchers and penetration testers in your jurisdiction).
+                您必须自行遵守所在国家或地区关于网络安全、数据安全、个人信息保护、计算机犯罪等方面的法律法规（例如您所在法域关于未经授权访问计算机系统、个人数据保护以及安全研究人员和渗透测试人员责任的法律）。
                 <span className="font-medium text-foreground">
                   {" "}
-                  All legal liability and consequences arising from your violation of the above laws and regulations or of this Statement are borne by you alone and have nothing to do with this software's authors and contributors.
+                  因您违反上述法律法规或本声明而产生的一切法律责任与后果，均由您自行承担，与本软件作者及贡献者无关。
                 </span>
               </p>
             </section>
@@ -267,11 +266,10 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   7
                 </span>
-                Article 7 · Disclaimer and Limitation of Liability
+                第七条 · 免责声明与责任限制
               </h4>
               <p className="pl-7">
-                This software is provided on an "AS IS" and "AS
-                AVAILABLE" basis, without any express or implied warranty, including but not limited to warranties of merchantability, fitness for a particular purpose, accuracy, and non-infringement. To the maximum extent permitted by applicable law, this software's authors and contributors are not liable for any direct, indirect, incidental, special, or consequential loss arising from using or being unable to use this software (regardless of whether it is used properly), including but not limited to data loss, system damage, business interruption, loss of profit, or legal disputes.
+                本软件按"现状"和"可用"状态提供，不附带任何明示或默示的保证，包括但不限于适销性、特定用途适用性、准确性和非侵权性的保证。在适用法律允许的最大范围内，本软件作者及贡献者不对因使用或无法使用本软件（无论使用是否得当）而产生的任何直接、间接、附带、特殊或后果性损失承担责任，包括但不限于数据丢失、系统损坏、业务中断、利润损失或法律纠纷。
               </p>
             </section>
 
@@ -280,17 +278,17 @@ export default function LoginPage() {
                 <span className="flex size-5 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
                   8
                 </span>
-                Article 8 · Changes to the Terms and Final Interpretation
+                第八条 · 条款变更与最终解释权
               </h4>
               <p className="pl-7">
-                The authors may update this Statement from time to time as laws, regulations, or project development require; the updated version ships with the project and takes effect on its publication date, and your continued use of this software means you accept the revised terms. To the extent permitted by law, the authors hold the final right of interpretation of this Statement. If any provision of this Statement is held invalid, the remaining provisions stay in effect.
+                作者可能根据法律法规或项目发展的需要不时更新本声明；更新版本随项目发布并自发布之日起生效，您继续使用本软件即表示接受修订后的条款。在法律允许的范围内，作者保留最终解释权。若本声明任何条款被认定无效，其余条款继续有效。
               </p>
             </section>
           </div>
 
           <DialogFooter className="mx-0 mb-0 flex-col items-stretch gap-2 rounded-b-xl px-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-muted-foreground">
-              {readToEnd ? "You have read all the terms" : "Scroll the terms to the bottom to confirm"}
+              {readToEnd ? "您已阅读全部条款" : "请滚动条款至底部以确认"}
             </p>
             <DialogClose asChild>
               <Button
@@ -301,7 +299,7 @@ export default function LoginPage() {
                   setError("");
                 }}
               >
-                I have read and agree to all the terms
+                我已阅读并同意全部条款
               </Button>
             </DialogClose>
           </DialogFooter>

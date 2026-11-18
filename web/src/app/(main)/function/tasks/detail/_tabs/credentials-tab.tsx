@@ -77,9 +77,9 @@ export function CredentialsTab({ taskId }: { taskId: string }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Test accounts</CardTitle>
+        <CardTitle>测试账户</CardTitle>
         <CardDescription>
-          Test accounts for this task. Entries with an empty password mean the agent registers that account and records it. Agent-recorded accounts appear here automatically.
+          此任务的测试账户。密码为空表示由智能体注册并记录该账户。智能体记录的账户将自动显示在此处。
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -89,9 +89,9 @@ export function CredentialsTab({ taskId }: { taskId: string }) {
         ) : items.length === 0 ? (
           <Empty>
             <EmptyHeader>
-              <EmptyTitle>No test accounts</EmptyTitle>
+              <EmptyTitle>暂无测试账户</EmptyTitle>
               <EmptyDescription>
-                Add one below, or declare them when creating the task — the agent reuses them for authenticated testing.
+                在下方添加账户，或在创建任务时声明——智能体将复用这些账户进行认证测试。
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -102,13 +102,13 @@ export function CredentialsTab({ taskId }: { taskId: string }) {
                 <code className="text-sm font-medium">{c.domain}</code>
                 <span className="text-muted-foreground text-sm">{c.username}</span>
                 <Badge variant={c.source === "agent" ? "secondary" : "outline"}>
-                  {c.source === "agent" ? "agent-recorded" : "declared"}
+                  {c.source === "agent" ? "智能体记录" : "已声明"}
                 </Badge>
                 <div className="ml-auto flex items-center gap-1">
                   <code className="max-w-40 truncate rounded bg-muted px-2 py-0.5 text-sm">
-                    {c.password === "" ? "— agent generates —" : "stored, hidden"}
+                    {c.password === "" ? "— 智能体生成 —" : "已存储，已隐藏"}
                   </code>
-                  <Button size="icon" variant="ghost" className="size-7" aria-label="Delete credential" onClick={() => remove(c.id)}>
+                  <Button size="icon" variant="ghost" className="size-7" aria-label="删除凭据" onClick={() => remove(c.id)}>
                     <TrashIcon />
                   </Button>
                 </div>
@@ -118,18 +118,18 @@ export function CredentialsTab({ taskId }: { taskId: string }) {
           </div>
         )}
         <div className="grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
-          <Input placeholder="domain (e.g. target.example.com)" value={domain} onChange={(e) => setDomain(e.target.value)} />
-          <Input placeholder="email or username" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <Input placeholder="域名（例如 target.example.com）" value={domain} onChange={(e) => setDomain(e.target.value)} />
+          <Input placeholder="邮箱或用户名" value={username} onChange={(e) => setUsername(e.target.value)} />
           <Input
-            placeholder="password (empty = agent generates)"
+            placeholder="密码（留空则由智能体生成）"
             type="text"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button variant="outline" disabled={adding || !domain.trim() || !username.trim()} onClick={add}>
-            <PlusIcon /> Add
+            <PlusIcon /> 添加
           </Button>
-          <Input className="sm:col-span-4" placeholder="note (optional, e.g. program alias account)" value={note} onChange={(e) => setNote(e.target.value)} />
+          <Input className="sm:col-span-4" placeholder="备注（可选，例如项目别名账户）" value={note} onChange={(e) => setNote(e.target.value)} />
         </div>
       </CardContent>
     </Card>

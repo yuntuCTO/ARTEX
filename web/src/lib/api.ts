@@ -148,10 +148,10 @@ export async function http<T>(path: string, init?: RequestInit): Promise<T> {
       document.cookie = "artex_token=; path=/; max-age=0";
       window.location.href = "/login";
     }
-    throw new Error("Unauthorized");
+    throw new Error("未授权");
   }
   if (!r.ok) {
-    const fallback = `${init?.method ?? "GET"} ${path}: ${r.status}`;
+    const fallback = `请求失败：${init?.method ?? "GET"} ${path}: ${r.status}`;
     let message = fallback;
     try {
       const payload = (await r.json()) as { error?: unknown };
@@ -187,25 +187,25 @@ export async function http<T>(path: string, init?: RequestInit): Promise<T> {
 // send the cookie.
 // mockReport returns a canned Markdown report for the demo.
 function mockReport(_task?: string): string {
-  return `# ARTEX Penetration Test Report — Acme Corp
+  return `# 云途Agent 渗透测试报告 — Acme 公司
 
-## Overview
-- Scope: acme.com (incl. www / admin / api / shop / vpn subdomains)
-- Confirmed findings: 6 (High 3 · Medium 3 · Low 2)
-- Engine mode: exploring
+## 概览
+- 范围：acme.com（含 www / admin / api / shop / vpn 子域名）
+- 已确认漏洞：6（高危 3 · 中危 3 · 低危 2）
+- 引擎模式：探索中
 
-## Key findings
-1. **[High] Default admin credentials** admin.acme.com admin/admin123 → full backend takeover.
-2. **[High] SQL injection** www.acme.com/search?q= → can read the acme_prod database.
-3. **[High] IDOR** api.acme.com/v1/orders?id= → can read other users' orders without authorization (incl. phone numbers/addresses).
-4. **[Medium] Reflected XSS**, **exposed .git source**, **login without rate limiting**.
+## 主要漏洞
+1. **[高危] 默认管理员凭据** admin.acme.com admin/admin123 → 可完全控制后端。
+2. **[高危] SQL 注入** www.acme.com/search?q= → 可读取 acme_prod 数据库。
+3. **[高危] IDOR** api.acme.com/v1/orders?id= → 可越权读取其他用户的订单（含电话号码和地址）。
+4. **[中危] 反射型 XSS**、**.git 源码泄露**、**登录未限流**。
 
-## Recommendations
-- Enforce admin password changes + enable MFA and ban default credentials.
-- Parameterize search endpoint queries and encode output.
-- Add object-level authorization checks to the API (IDOR) and rotate to a strong JWT secret.
+## 修复建议
+- 强制更改管理员密码，启用 MFA，并禁用默认凭据。
+- 对搜索端点使用参数化查询，并对输出进行编码。
+- 为 API 增加对象级授权校验以修复 IDOR，并更换为高强度 JWT 密钥。
 
-> (demo) This report is generated from mock data for UI demonstration only.`;
+> （演示）本报告由模拟数据生成，仅用于界面演示。`;
 }
 
 export function sseUrl(path: string): string {
@@ -490,19 +490,19 @@ export const api = {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: fd,
     });
-    if (!r.ok) throw new Error(`Upload failed: ${r.status}`);
+    if (!r.ok) throw new Error(`上传失败：${r.status}`);
     return r.json() as Promise<{ uploaded: number }>;
   },
   workspaceDownload: async (path: string) => {
     let blob: Blob;
     if (MOCK) {
-      blob = new Blob([`(demo) Sample download content of ${path}.`], { type: "text/plain" });
+      blob = new Blob([`（演示）${path} 的示例下载内容。`], { type: "text/plain" });
     } else {
       const token = getToken();
       const r = await fetch(`/api/workspace/download?path=${encodeURIComponent(path)}`, {
         headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       });
-      if (!r.ok) throw new Error(`Download failed: ${r.status}`);
+      if (!r.ok) throw new Error(`下载失败：${r.status}`);
       blob = await r.blob();
     }
     const objUrl = URL.createObjectURL(blob);
@@ -616,7 +616,7 @@ export const api = {
     const r = await fetch(`/api/exploration/findings/export?${p.toString()}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
-    if (!r.ok) throw new Error(`export: ${r.status}`);
+    if (!r.ok) throw new Error(`导出失败：${r.status}`);
     const blob = await r.blob();
     // Prefer the backend's Content-Disposition for the filename; fall back to a default name.
     const disp = r.headers.get("Content-Disposition") ?? "";
@@ -691,8 +691,8 @@ export const api = {
       { headers: token ? { Authorization: `Bearer ${token}` } : {} },
     );
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: "Download failed" }));
-      throw new Error(error.error ?? "Download failed");
+      const error = await response.json().catch(() => ({ error: "下载失败" }));
+      throw new Error(error.error ?? "下载失败");
     }
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
@@ -865,18 +865,18 @@ export const api = {
   // Raw bytes of one stored blob (a full message payload or an oversized body).
   // The JSON-only `get` cannot carry binary, hence the direct fetch.
   trafficBlob: async (hash: string) => {
-    if (MOCK) throw new Error("Blob download is not available in mock mode");
+    if (MOCK) throw new Error("模拟模式下无法下载二进制数据");
     const token = getToken();
     const r = await fetch(`/api/traffic/blob?hash=${encodeURIComponent(hash)}`, {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     });
-    if (!r.ok) throw new Error(`Blob download failed: ${r.status}`);
+    if (!r.ok) throw new Error(`二进制数据下载失败：${r.status}`);
     return new Uint8Array(await r.arrayBuffer());
   },
   // Re-sends an edited request through the proxy. Errors carry the HTTP status
   // (ApiError): 413 body too large, 502 proxy/upstream, 503 capture off, 504 timeout.
   trafficReplay: async (req: TrafficReplayRequest) => {
-    if (MOCK) throw new Error("Replay is not available in mock mode");
+    if (MOCK) throw new Error("模拟模式下无法重放");
     return post<TrafficReplayResult>(`/traffic/replay`, req);
   },
   trafficHosts: () => get<{ hosts: TrafficHost[] }>(`/traffic/hosts`),
@@ -947,7 +947,7 @@ export const api = {
     const r = await fetch(`/api/report${tq(task)}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
-    if (!r.ok) throw new Error(`report: ${r.status}`);
+    if (!r.ok) throw new Error(`报告加载失败：${r.status}`);
     return r.text();
   },
   chatMentions: (kind: string, query: string, signal?: AbortSignal, cursor = "") =>
@@ -962,7 +962,7 @@ export const api = {
   chatUpload: async (scope: "task" | "session" | "staging", id: string, files: File[]) => {
     const totalSize = files.reduce((total, file) => total + file.size, 0);
     if (totalSize > MAX_CHAT_UPLOAD_BYTES) {
-      throw new Error("Files exceed the 512 MiB upload limit (combined size).");
+      throw new Error("文件总大小超过 512 MiB 的上传上限。");
     }
     if (MOCK)
       return {
@@ -981,7 +981,7 @@ export const api = {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: fd,
     });
-    if (!r.ok) throw new Error(`Upload failed: ${r.status} ${await r.text()}`);
+    if (!r.ok) throw new Error(`上传失败：${r.status} ${await r.text()}`);
     return r.json() as Promise<{ attachments: ChatAttachment[] }>;
   },
   stopChat: (taskId: string) => post<{ status: string }>(`/tasks/${taskId}/chat/stop`, {}),
@@ -1245,7 +1245,7 @@ export const api = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     const body = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(body?.error || `Upload failed (${r.status})`);
+    if (!r.ok) throw new Error(body?.error || `上传失败（${r.status}）`);
     return body;
   },
   deleteSkill: (name: string) => del<{ deleted: string }>(`/skills/${name}`),

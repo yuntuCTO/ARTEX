@@ -148,7 +148,7 @@ function fmtBytes(n: number): string {
 
 // UPLOAD_MARKER labels the auto-appended block of uploaded-file paths inside the task
 // description, so re-uploads append under the same block instead of adding a new header.
-const UPLOAD_MARKER = "[Uploaded Files (Absolute Paths)]";
+const UPLOAD_MARKER = "[已上传文件（绝对路径）]";
 
 // appendUploads folds newly-uploaded files' ABSOLUTE paths into the description as a
 // Read/Bash-friendly manifest — the worker opens them by path. Keeps one marked block:
@@ -159,7 +159,7 @@ function appendUploads(desc: string, atts: ChatAttachment[]): string {
     return `${desc.replace(/\s*$/, "")}\n${bullets}\n`;
   }
   const head = desc.trim() ? `${desc.replace(/\s*$/, "")}\n\n` : "";
-  return `${head}${UPLOAD_MARKER} worker can open them by path with Read/Bash:\n${bullets}\n`;
+  return `${head}${UPLOAD_MARKER} 执行器可用 Read/Bash 按路径打开：\n${bullets}\n`;
 }
 
 // POLL_MS is the task-list refresh interval. Task state moves on the server (planner /
@@ -181,10 +181,10 @@ function fmtDuration(sec: number): string {
   const h = Math.floor((sec % 86400) / 3600);
   const m = Math.floor((sec % 3600) / 60);
   const s = sec % 60;
-  if (d > 0) return `${d}d ${h}h`;
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s}s`;
-  return `${s}s`;
+  if (d > 0) return `${d}天 ${h}小时`;
+  if (h > 0) return `${h}小时 ${m}分钟`;
+  if (m > 0) return `${m}分钟 ${s}秒`;
+  return `${s}秒`;
 }
 
 // taskDuration is the task's run duration in seconds: created → now while running,
@@ -208,18 +208,18 @@ type DeleteCounts = Omit<DeleteTaskResult, "deleted" | "cleanup_warning">;
 
 function deleteDetails(result: DeleteCounts): string[] {
   const details: string[] = [];
-  if (result.assets_deleted > 0) details.push(`Deleted ${result.assets_deleted} assets`);
-  if (result.assets_detached > 0) details.push(`Detached ${result.assets_detached} shared assets`);
-  if (result.traffic_deleted > 0) details.push(`Deleted ${result.traffic_deleted} traffic records`);
-  if (result.files_deleted) details.push("Deleted task files");
-  if (result.findings_deleted > 0) details.push(`Deleted ${result.findings_deleted} findings`);
-  if (result.llm_records_deleted > 0) details.push(`Deleted ${result.llm_records_deleted} LLM request/response records`);
+  if (result.assets_deleted > 0) details.push(`已删除 ${result.assets_deleted} 个资产`);
+  if (result.assets_detached > 0) details.push(`已解除 ${result.assets_detached} 个共享资产关联`);
+  if (result.traffic_deleted > 0) details.push(`已删除 ${result.traffic_deleted} 条流量记录`);
+  if (result.files_deleted) details.push("已删除任务文件");
+  if (result.findings_deleted > 0) details.push(`已删除 ${result.findings_deleted} 个漏洞`);
+  if (result.llm_records_deleted > 0) details.push(`已删除 ${result.llm_records_deleted} 条 LLM 请求/响应记录`);
   return details;
 }
 
 function deleteSummary(result: DeleteTaskResult): string {
   const details = deleteDetails(result);
-  return details.length > 0 ? `Task deleted (${details.join(", ")})` : "Task deleted";
+  return details.length > 0 ? `任务已删除（${details.join("，")}）` : "任务已删除";
 }
 
 // fmtDateTime renders a unix-seconds timestamp as a compact local date-time
@@ -232,13 +232,13 @@ function fmtDateTime(unix?: number): string {
 }
 
 const STATUS_OPTIONS: { value: TaskStatus; label: string }[] = [
-  { value: "created", label: "Created" },
-  { value: "queued", label: "Queued" },
-  { value: "running", label: "Running" },
-  { value: "paused", label: "Paused" },
-  { value: "done", label: "Completed" },
-  { value: "failed", label: "Failed" },
-  { value: "timeout", label: "Timed out" },
+  { value: "created", label: "已创建" },
+  { value: "queued", label: "排队中" },
+  { value: "running", label: "运行中" },
+  { value: "paused", label: "已暂停" },
+  { value: "done", label: "已完成" },
+  { value: "failed", label: "已失败" },
+  { value: "timeout", label: "已超时" },
 ];
 
 // Select does not accept an empty-string value, so "no category" in the filter, the create form, and the bulk move
@@ -533,13 +533,13 @@ export default function TasksPage() {
       try {
         const result = await api.deleteTask(id, options);
         if (result.cleanup_warning) {
-          toast.warning(`${deleteSummary(result)}; some external data cleanup did not finish: ${result.cleanup_warning}`);
+          toast.warning(`${deleteSummary(result)}；部分外部数据清理未完成：${result.cleanup_warning}`);
         } else {
           toast.success(deleteSummary(result));
         }
         load();
       } catch (e) {
-        toast.error("Delete failed: " + (e as Error).message);
+        toast.error("删除失败：" + (e as Error).message);
         throw e;
       }
     },
@@ -554,10 +554,10 @@ export default function TasksPage() {
       try {
         const result = await api.controlTask(id, action);
         toast.success(
-          action === "pause" ? `Task #${id} paused` : `Task #${id} resumed${result.queued ? ", queued" : ""}`,
+          action === "pause" ? `任务 #${id} 已暂停` : `任务 #${id} 已恢复${result.queued ? "，排队中" : ""}`,
         );
       } catch (e) {
-        toast.error(`${action === "pause" ? "Pause" : "Resume"} failed: ${(e as Error).message}`);
+        toast.error(`${action === "pause" ? "暂停" : "恢复"}失败：${(e as Error).message}`);
       } finally {
         // Refresh regardless of outcome: failures usually mean the state changed, and re-fetching restores the right button shape.
         lastRef.current = "";
@@ -571,11 +571,11 @@ export default function TasksPage() {
     async (task: Task, name: string) => {
       try {
         await api.renameTask(task.id, name);
-        toast.success(`Task #${task.id} renamed`);
+        toast.success(`任务 #${task.id} 已重命名`);
         lastRef.current = "";
         load();
       } catch (error) {
-        toast.error(`Rename failed: ${(error as Error).message}`);
+        toast.error(`重命名失败：${(error as Error).message}`);
         throw error;
       }
     },
@@ -587,11 +587,11 @@ export default function TasksPage() {
       const pinned = taskIsPinned(task);
       try {
         await api.pinTask(task.id, !pinned);
-        toast.success(pinned ? `Task #${task.id} unpinned` : `Task #${task.id} pinned`);
+        toast.success(pinned ? `任务 #${task.id} 已取消置顶` : `任务 #${task.id} 已置顶`);
         lastRef.current = "";
         load();
       } catch (error) {
-        toast.error(`${pinned ? "Unpin" : "Pin"} failed: ${(error as Error).message}`);
+        toast.error(`${pinned ? "取消置顶" : "置顶"}失败：${(error as Error).message}`);
         throw error;
       }
     },
@@ -602,12 +602,12 @@ export default function TasksPage() {
     async (task: Task) => {
       try {
         await api.archiveTask(task.id);
-        toast.success(`Task #${task.id} queued for archiving`);
+        toast.success(`任务 #${task.id} 已加入归档队列`);
         setActiveTab("archived");
         lastRef.current = "";
         load();
       } catch (error) {
-        toast.error(`Archive failed: ${(error as Error).message}`);
+        toast.error(`归档失败：${(error as Error).message}`);
         throw error;
       }
     },
@@ -654,9 +654,9 @@ export default function TasksPage() {
           return next;
         });
         const details = deleteDetails(total);
-        const summary = `Deleted ${deleted.length} tasks` + (details.length > 0 ? ` (${details.join(", ")})` : "");
+        const summary = `已删除 ${deleted.length} 个任务` + (details.length > 0 ? ` (${details.join(", ")})` : "");
         if (warnings.length > 0) {
-          toast.warning(`${summary}; some external data cleanup did not finish: ${warnings.join("; ")}`);
+          toast.warning(`${summary}；部分外部数据清理未完成：${warnings.join("；")}`);
         } else {
           toast.success(summary);
         }
@@ -666,7 +666,7 @@ export default function TasksPage() {
           .slice(0, 3)
           .map((f) => `#${f.id} (${f.message})`)
           .join("; ");
-        toast.error(`${failed.length} tasks failed to delete: ${head}${failed.length > 3 ? " and more" : ""}`);
+        toast.error(`${failed.length} 个任务删除失败：${head}${failed.length > 3 ? " 等" : ""}`);
       }
       load();
     },
@@ -692,13 +692,13 @@ export default function TasksPage() {
     const result = await api.archiveTasks(archivableTaskIDs);
     const succeeded = result.items.filter((item) => item.ok);
     const failed = result.items.filter((item) => !item.ok);
-    if (succeeded.length > 0) toast.success(`Queued ${succeeded.length} tasks for archiving`);
+    if (succeeded.length > 0) toast.success(`已将 ${succeeded.length} 个任务加入归档队列`);
     if (failed.length > 0) {
       toast.error(
-        `${failed.length} tasks could not be archived: ${failed
+        `${failed.length} 个任务无法归档：${failed
           .slice(0, 3)
-          .map((item) => `#${item.id} (${item.error || "state changed"})`)
-          .join("; ")}`,
+          .map((item) => `#${item.id} (${item.error || "状态已变更"})`)
+          .join("；")}`,
       );
     }
     setSelectedIds(new Set());
@@ -711,7 +711,7 @@ export default function TasksPage() {
     async (action: "pause" | "resume", ids: string[]) => {
       if (ids.length === 0 || batchControlling) return;
       if (ids.length > 100) {
-        toast.error("You can control at most 100 tasks at once");
+        toast.error("一次最多控制 100 个任务");
         return;
       }
       setBatchControlling(action);
@@ -722,21 +722,21 @@ export default function TasksPage() {
         if (succeeded.length > 0) {
           toast.success(
             action === "pause"
-              ? `Paused ${succeeded.length} tasks`
-              : `Resumed ${succeeded.length} tasks${succeeded.some((item) => item.queued) ? ", some tasks were queued" : ""}`,
+              ? `已暂停 ${succeeded.length} 个任务`
+              : `已恢复 ${succeeded.length} 个任务${succeeded.some((item) => item.queued) ? "，部分任务已排队" : ""}`,
           );
         }
         if (failed.length > 0) {
           const details = failed
             .slice(0, 3)
-            .map((item) => `#${item.id} (${item.error || "state changed"})`)
-            .join("; ");
-          toast.error(`${failed.length} tasks failed: ${details}${failed.length > 3 ? " and more" : ""}`);
+            .map((item) => `#${item.id} (${item.error || "状态已变更"})`)
+            .join("；");
+          toast.error(`${failed.length} 个任务失败：${details}${failed.length > 3 ? " 等" : ""}`);
         }
         lastRef.current = "";
         load();
       } catch (error) {
-        toast.error(`${action === "pause" ? "Bulk pause" : "Bulk resume"} failed: ${(error as Error).message}`);
+        toast.error(`${action === "pause" ? "批量暂停" : "批量恢复"}失败：${(error as Error).message}`);
       } finally {
         setBatchControlling(null);
       }
@@ -750,7 +750,7 @@ export default function TasksPage() {
       const ids = [...selectedIds];
       if (ids.length === 0 || movingCategory) return;
       if (ids.length > 100) {
-        toast.error("You can change the category of at most 100 tasks at once");
+        toast.error("一次最多修改 100 个任务的分类");
         return;
       }
       setMovingCategory(true);
@@ -758,21 +758,21 @@ export default function TasksPage() {
         const result = await api.updateTasksCategory(ids, categoryID);
         const succeeded = result.items.filter((item) => item.ok);
         const failed = result.items.filter((item) => !item.ok);
-        const target = result.category?.name ?? "Uncategorized";
+        const target = result.category?.name ?? "未分类";
         if (succeeded.length > 0) {
-          toast.success(`Moved ${succeeded.length} tasks to "${target}"`);
+          toast.success(`已将 ${succeeded.length} 个任务移至「${target}」`);
           setSelectedIds(new Set());
         }
         if (failed.length > 0) {
           const details = failed
             .slice(0, 3)
-            .map((item) => `#${item.id} (${item.error || "task no longer exists"})`)
+            .map((item) => `#${item.id} (${item.error || "任务不存在"})`)
             .join("; ");
-          toast.error(`${failed.length} tasks could not be moved: ${details}${failed.length > 3 ? " and more" : ""}`);
+          toast.error(`${failed.length} 个任务无法移动：${details}${failed.length > 3 ? " 等" : ""}`);
         }
         refreshCategoriesAndTasks();
       } catch (error) {
-        toast.error(`Failed to change category: ${(error as Error).message}`);
+        toast.error(`修改分类失败：${(error as Error).message}`);
       } finally {
         setMovingCategory(false);
       }
@@ -783,8 +783,8 @@ export default function TasksPage() {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-4">
       <TabsList className="mx-4 lg:mx-6">
-        <TabsTrigger value="current">Current tasks</TabsTrigger>
-        <TabsTrigger value="archived">Archived</TabsTrigger>
+        <TabsTrigger value="current">当前任务</TabsTrigger>
+        <TabsTrigger value="archived">已归档</TabsTrigger>
       </TabsList>
       <TabsContent value="current">
         <Card>
@@ -793,7 +793,7 @@ export default function TasksPage() {
               <div className="relative w-full sm:max-w-xs">
                 <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
                 <Input
-                  placeholder="Search description / goal / ID"
+                  placeholder="搜索描述 / 目标 / ID"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="pl-8"
@@ -802,7 +802,7 @@ export default function TasksPage() {
                   <button
                     type="button"
                     onClick={() => setQuery("")}
-                    aria-label="Clear search"
+                    aria-label="清除搜索"
                     className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
                   >
                     <XIcon className="size-4" />
@@ -811,11 +811,11 @@ export default function TasksPage() {
               </div>
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as TaskStatus | "all")}>
                 <SelectTrigger className="w-36">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder="状态" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="all">All statuses</SelectItem>
+                    <SelectItem value="all">全部状态</SelectItem>
                     {STATUS_OPTIONS.map((s) => (
                       <SelectItem key={s.value} value={s.value}>
                         {s.label}
@@ -826,12 +826,12 @@ export default function TasksPage() {
               </Select>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Task category" />
+                  <SelectValue placeholder="任务分类" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="all">All categories</SelectItem>
-                    <SelectItem value={UNCATEGORIZED_VALUE}>Uncategorized</SelectItem>
+                    <SelectItem value="all">全部分类</SelectItem>
+                    <SelectItem value={UNCATEGORIZED_VALUE}>未分类</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={String(category.id)}>
                         {category.name}
@@ -841,13 +841,13 @@ export default function TasksPage() {
                 </SelectContent>
               </Select>
               <span className="text-muted-foreground text-xs tabular-nums">
-                {filtered.length}/{tasks.length} tasks
+                {filtered.length}/{tasks.length} 个任务
               </span>
               {selectedIds.size > 0 && (
                 <>
-                  <span className="text-xs tabular-nums">{selectedIds.size} selected</span>
+                  <span className="text-xs tabular-nums">{selectedIds.size} 个已选</span>
                   <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
-                    Clear selection
+                    清除选择
                   </Button>
                   {pausableTaskIDs.length > 0 && (
                     <Button
@@ -861,7 +861,7 @@ export default function TasksPage() {
                       ) : (
                         <PauseIcon data-icon="inline-start" />
                       )}
-                      Pause {pausableTaskIDs.length}
+                      暂停 {pausableTaskIDs.length}
                     </Button>
                   )}
                   {resumableTaskIDs.length > 0 && (
@@ -876,7 +876,7 @@ export default function TasksPage() {
                       ) : (
                         <PlayIcon data-icon="inline-start" />
                       )}
-                      Resume {resumableTaskIDs.length}
+                      恢复 {resumableTaskIDs.length}
                     </Button>
                   )}
                   {archivableTaskIDs.length > 0 && (
@@ -886,7 +886,7 @@ export default function TasksPage() {
                       trigger={
                         <Button size="sm" variant="outline">
                           <ArchiveIcon data-icon="inline-start" />
-                          Archive {archivableTaskIDs.length}
+                          归档 {archivableTaskIDs.length}
                         </Button>
                       }
                     />
@@ -917,11 +917,11 @@ export default function TasksPage() {
 
             {tasks.length === 0 ? (
               <div className="text-muted-foreground mx-4 flex items-center justify-center rounded-lg border border-dashed py-20 text-sm lg:mx-6">
-                No tasks yet. Click "New task" at the top right to start.
+                暂无任务。点击右上角「新建任务」开始。
               </div>
             ) : filtered.length === 0 ? (
               <div className="text-muted-foreground mx-4 flex items-center justify-center rounded-lg border border-dashed py-20 text-sm lg:mx-6">
-                No matching tasks.
+                没有匹配的任务。
               </div>
             ) : (
               <Table className="**:data-[slot='table-cell']:px-4 **:data-[slot='table-head']:px-4">
@@ -931,7 +931,7 @@ export default function TasksPage() {
                       <Checkbox
                         checked={headerChecked}
                         onCheckedChange={(checked) => toggleSelectedPage(checked === true)}
-                        aria-label="Select all tasks on this page"
+                        aria-label="选择本页全部任务"
                       />
                     </TableHead>
                     <SortableTaskHead
@@ -942,24 +942,24 @@ export default function TasksPage() {
                       className="font-mono"
                       onSort={sortTasksBy}
                     />
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Goal</TableHead>
+                    <TableHead>名称</TableHead>
+                    <TableHead>描述</TableHead>
+                    <TableHead>目标</TableHead>
                     <SortableTaskHead
                       field="status"
-                      label="Status"
+                      label="状态"
                       activeField={sortField}
                       direction={sortDirection}
                       onSort={sortTasksBy}
                     />
-                    <TableHead className="text-center">Goal progress</TableHead>
-                    <TableHead className="text-center" title="Critical / High / Medium / Low">
-                      Findings <span className="text-muted-foreground font-normal">C/H/M/L</span>
+                    <TableHead className="text-center">目标进度</TableHead>
+                    <TableHead className="text-center" title="严重 / 高危 / 中危 / 低危">
+                      漏洞 <span className="text-muted-foreground font-normal">C/H/M/L</span>
                     </TableHead>
-                    <TableHead className="text-center">Running workers</TableHead>
+                    <TableHead className="text-center">运行中的执行器</TableHead>
                     <SortableTaskHead
                       field="created"
-                      label="Created at"
+                      label="创建时间"
                       activeField={sortField}
                       direction={sortDirection}
                       align="right"
@@ -967,7 +967,7 @@ export default function TasksPage() {
                     />
                     <SortableTaskHead
                       field="duration"
-                      label="Duration"
+                      label="持续时间"
                       activeField={sortField}
                       direction={sortDirection}
                       align="right"
@@ -975,7 +975,7 @@ export default function TasksPage() {
                     />
                     <TableHead className="text-right">Token</TableHead>
                     <TableHead className="sticky right-0 z-10 bg-card text-right shadow-[-1px_0_0_0_hsl(var(--border))]">
-                      Actions
+                      操作
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -1048,8 +1048,8 @@ function SortableTaskHead({
   let ariaSort: React.AriaAttributes["aria-sort"] = "none";
   if (active) ariaSort = direction === "asc" ? "ascending" : "descending";
 
-  let actionLabel = `Sort by ${label} descending`;
-  if (active) actionLabel = `${label} is currently ${direction === "asc" ? "ascending" : "descending"}; click to toggle sort direction`;
+  let actionLabel = `按${label}降序排列`;
+  if (active) actionLabel = `${label}当前为${direction === "asc" ? "升序" : "降序"}；点击切换排序方向`;
 
   return (
     <TableHead className={className} aria-sort={ariaSort}>
@@ -1096,10 +1096,10 @@ function ConcurrencySettingsDialog() {
     setSaving(true);
     try {
       await api.setSettings({ task_concurrency_enabled: enabled, task_concurrency_limit: nextLimit });
-      toast.success(enabled ? `Concurrency limit enabled: at most ${nextLimit} tasks can run simultaneously` : "Task concurrency limit disabled");
+      toast.success(enabled ? `并发上限已启用：最多同时运行 ${nextLimit} 个任务` : "任务并发上限已关闭");
       setOpen(false);
     } catch (error) {
-      toast.error(`Save failed: ${(error as Error).message}`);
+      toast.error(`保存失败：${(error as Error).message}`);
     } finally {
       setSaving(false);
     }
@@ -1108,28 +1108,28 @@ function ConcurrencySettingsDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="ml-auto" aria-label="Task concurrency settings">
-          <SlidersHorizontalIcon /> Concurrency
+        <Button size="sm" variant="outline" className="ml-auto" aria-label="任务并发设置">
+          <SlidersHorizontalIcon /> 并发
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Task concurrency limit</DialogTitle>
+          <DialogTitle>任务并发上限</DialogTitle>
           <DialogDescription>
-            Limit how many tasks can run simultaneously. Once the limit is reached, new tasks queue in creation order and start automatically as slots free up.
+            限制同时运行的任务数量。达到上限后，新任务按创建顺序排队，并在有空位时自动启动。
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-5 py-2">
           <div className="flex items-center justify-between gap-4">
             <div className="grid gap-1">
-              <Label htmlFor="task-concurrency-enabled">Enable task concurrency limit</Label>
-              <span className="text-muted-foreground text-xs">Off by default</span>
+              <Label htmlFor="task-concurrency-enabled">启用任务并发上限</Label>
+              <span className="text-muted-foreground text-xs">默认关闭</span>
             </div>
             <Switch id="task-concurrency-enabled" checked={enabled} onCheckedChange={setEnabled} disabled={loading} />
           </div>
           {enabled && (
             <div className="grid gap-2">
-              <Label htmlFor="task-concurrency-limit">Max concurrent tasks</Label>
+              <Label htmlFor="task-concurrency-limit">最大并发任务数</Label>
               <Input
                 id="task-concurrency-limit"
                 type="number"
@@ -1144,10 +1144,10 @@ function ConcurrencySettingsDialog() {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">取消</Button>
           </DialogClose>
           <Button onClick={save} disabled={loading || saving}>
-            {saving && <Loader2Icon className="animate-spin" />} Save
+            {saving && <Loader2Icon className="animate-spin" />} 保存
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -1186,7 +1186,7 @@ const TaskRow = React.memo(function TaskRow({
         <Checkbox
           checked={selected}
           onCheckedChange={(checked) => onSelectedChange(task.id, checked === true)}
-          aria-label={`Select task ${task.id}`}
+          aria-label={`选择任务 ${task.id}`}
         />
       </TableCell>
       <TableCell>
@@ -1196,7 +1196,7 @@ const TaskRow = React.memo(function TaskRow({
         <div className="flex max-w-xs items-center gap-2">
           <TaskNameEditor task={task} onRename={onRename} />
           {task.active && <StarIcon className="size-4 shrink-0 fill-amber-400 text-amber-400" />}
-          {taskIsPinned(task) && <PinIcon className="text-primary size-4 shrink-0" aria-label="Pinned" />}
+          {taskIsPinned(task) && <PinIcon className="text-primary size-4 shrink-0" aria-label="已置顶" />}
         </div>
       </TableCell>
       <TableCell className="text-muted-foreground max-w-40">
@@ -1230,7 +1230,7 @@ const TaskRow = React.memo(function TaskRow({
             <span className={n > 0 ? cls : "text-muted-foreground"}>{n}</span>
           );
           return (
-            <span className="font-medium whitespace-nowrap" title="Critical / High / Medium / Low">
+            <span className="font-medium whitespace-nowrap" title="严重 / 高危 / 中危 / 低危">
               {seg(f.critical, "text-rose-600 dark:text-rose-400")}
               <span className="text-muted-foreground">/</span>
               {seg(f.high, "text-red-600 dark:text-red-400")}
@@ -1267,16 +1267,16 @@ const TaskRow = React.memo(function TaskRow({
         className="text-right text-xs whitespace-nowrap tabular-nums"
         title={
           task.tokens
-            ? `Input ${task.tokens.input_tokens} · Cache ${task.tokens.cache_read_tokens} · Output ${task.tokens.output_tokens}`
+            ? `输入 ${task.tokens.input_tokens} · 缓存 ${task.tokens.cache_read_tokens} · 输出 ${task.tokens.output_tokens}`
             : undefined
         }
       >
         {task.tokens ? (
           <span className="text-muted-foreground">
-            In <span className="text-foreground">{fmtTokens(task.tokens.input_tokens)}</span>
-            {" · Cache "}
+            输入 <span className="text-foreground">{fmtTokens(task.tokens.input_tokens)}</span>
+            {" · 缓存 "}
             <span className="text-foreground">{fmtTokens(task.tokens.cache_read_tokens)}</span>
-            {" · Out "}
+            {" · 输出 "}
             <span className="text-foreground">{fmtTokens(task.tokens.output_tokens)}</span>
           </span>
         ) : (
@@ -1285,7 +1285,7 @@ const TaskRow = React.memo(function TaskRow({
       </TableCell>
       <TableCell className="sticky right-0 z-10 bg-card text-right shadow-[-1px_0_0_0_hsl(var(--border))] group-hover:bg-muted/50">
         <div className="flex items-center justify-end gap-0.5">
-          <Button size="icon" variant="ghost" asChild aria-label="View task details" title="View task details">
+          <Button size="icon" variant="ghost" asChild aria-label="查看任务详情" title="查看任务详情">
             <Link href={`/function/tasks/detail?id=${encodeURIComponent(task.id)}`}>
               <EyeIcon />
             </Link>
@@ -1346,7 +1346,7 @@ function TaskNameEditor({ task, onRename }: { task: Task; onRename: (task: Task,
           maxLength={200}
           autoFocus
           disabled={saving}
-          aria-label={`Task #${task.id} name`}
+          aria-label={`任务 #${task.id} 名称`}
           className="h-7 min-w-28 max-w-48 px-2 font-medium"
           onFocus={(event) => event.currentTarget.select()}
           onChange={(event) => setName(event.target.value)}
@@ -1374,15 +1374,15 @@ function TaskNameEditor({ task, onRename }: { task: Task; onRename: (task: Task,
         className="min-w-0 truncate rounded-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         title={task.name?.trim() ? task.name : task.description}
       >
-        {task.name?.trim() ? task.name : <span className="text-muted-foreground">Unnamed</span>}
+        {task.name?.trim() ? task.name : <span className="text-muted-foreground">未命名</span>}
       </Link>
       <Button
         type="button"
         variant="ghost"
         size="icon-xs"
         className="shrink-0 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
-        aria-label={`Rename task #${task.id}`}
-        title="Rename"
+        aria-label={`重命名任务 #${task.id}`}
+        title="重命名"
         onClick={() => {
           setName(task.name ?? "");
           setEditing(true);
@@ -1410,8 +1410,8 @@ function TaskPinAction({ task, onTogglePinned }: { task: Task; onTogglePinned: (
       variant="ghost"
       size="icon"
       disabled={pinning}
-      aria-label={pinned ? `Unpin task #${task.id}` : `Pin task #${task.id}`}
-      title={pinned ? "Unpin" : "Pin"}
+      aria-label={pinned ? `取消置顶任务 #${task.id}` : `置顶任务 #${task.id}`}
+      title={pinned ? "取消置顶" : "置顶"}
       onClick={async () => {
         setPinning(true);
         try {
@@ -1444,13 +1444,13 @@ function TaskControlButton({
 }) {
   const [pending, setPending] = React.useState(false);
   const action = taskControlAction(task.status);
-  const label = action === "resume" ? "Resume task" : "Pause task";
+  const label = action === "resume" ? "恢复任务" : "暂停任务";
   return (
     <Button
       size="icon"
       variant="ghost"
       aria-label={label}
-      title={action ? label : "Cannot pause or resume in this state"}
+      title={action ? label : "当前状态无法暂停或恢复"}
       disabled={!action || pending}
       onClick={async () => {
         if (!action) return;
@@ -1468,10 +1468,10 @@ function TaskControlButton({
 }
 
 function archiveBlockReason(task: Task): string {
-  if (task.queued) return "Queued tasks must be paused first";
-  if (!ARCHIVABLE_STATUSES.has(task.status)) return "Running or unfinished tasks must be paused first";
+  if (task.queued) return "排队中的任务必须先暂停";
+  if (!ARCHIVABLE_STATUSES.has(task.status)) return "运行中或未完成的任务必须先暂停";
   if (task.archive_blocked_by_task_id) {
-    return `The task is directly inherited by unarchived task #${task.archive_blocked_by_task_id}; archive the dependent task first`;
+    return `此任务被尚未归档的任务 #${task.archive_blocked_by_task_id} 直接继承；请先归档依赖任务`;
   }
   return "";
 }
@@ -1492,13 +1492,13 @@ function ArchiveConfirmDialog({
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{count === 1 ? "Archive task" : `Archive ${count} tasks`}</AlertDialogTitle>
+          <AlertDialogTitle>{count === 1 ? "归档任务" : `归档 ${count} 个任务`}</AlertDialogTitle>
           <AlertDialogDescription className="[overflow-wrap:anywhere]">
-            Archiving stops task scheduling and compresses the graph, LLM history, files, and exclusive assets and traffic into local cold storage. Once archived, a task can be restored from "Archived".
+            归档会停止任务调度，并将图、LLM 历史、文件以及独占的资产和流量压缩到本地冷存储。归档后的任务可从「已归档」中恢复。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>取消</AlertDialogCancel>
           <AlertDialogAction
             disabled={pending}
             onClick={async (event) => {
@@ -1513,7 +1513,7 @@ function ArchiveConfirmDialog({
             }}
           >
             {pending && <Spinner data-icon="inline-start" />}
-            Confirm archive
+            确认归档
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -1524,7 +1524,7 @@ function ArchiveConfirmDialog({
 function TaskArchiveAction({ task, onArchive }: { task: Task; onArchive: (task: Task) => Promise<void> }) {
   const reason = archiveBlockReason(task);
   const trigger = (
-    <Button size="icon" variant="ghost" disabled={Boolean(reason)} aria-label={`Archive task #${task.id}`}>
+    <Button size="icon" variant="ghost" disabled={Boolean(reason)} aria-label={`归档任务 #${task.id}`}>
       <ArchiveIcon />
     </Button>
   );
@@ -1554,16 +1554,16 @@ const ARCHIVE_FAILED_STATES = new Set<TaskArchiveState>(["archive_failed", "rest
 
 function archiveStateLabel(state: TaskArchiveState): string {
   const labels: Record<TaskArchiveState, string> = {
-    archive_queued: "Archive queued",
-    archiving: "Archiving",
-    archive_failed: "Archive failed",
-    ready: "Restorable",
-    restore_queued: "Restore queued",
-    restoring: "Restoring",
-    restore_failed: "Restore failed",
-    delete_queued: "Delete queued",
-    deleting: "Deleting",
-    delete_failed: "Delete failed",
+    archive_queued: "归档排队中",
+    archiving: "归档中",
+    archive_failed: "归档失败",
+    ready: "可恢复",
+    restore_queued: "恢复排队中",
+    restoring: "恢复中",
+    restore_failed: "恢复失败",
+    delete_queued: "删除排队中",
+    deleting: "删除中",
+    delete_failed: "删除失败",
   };
   return labels[state];
 }
@@ -1587,7 +1587,7 @@ function formatArchiveBytes(bytes: number): string {
 function archiveCompressionLabel(archive: TaskArchive): string {
   if (archive.original_size <= 0 || archive.compressed_size <= 0) return "—";
   const saved = Math.max(0, 100 - (archive.compressed_size / archive.original_size) * 100);
-  return `${formatArchiveBytes(archive.compressed_size)} · saves ${saved.toFixed(0)}%`;
+  return `${formatArchiveBytes(archive.compressed_size)} · 节省 ${saved.toFixed(0)}%`;
 }
 
 function archiveDataTotal(archive: TaskArchive): number {
@@ -1619,13 +1619,13 @@ function ArchiveDeleteDialog({
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Permanently delete {archives.length} task archives?</AlertDialogTitle>
+          <AlertDialogTitle>永久删除 {archives.length} 个任务归档？</AlertDialogTitle>
           <AlertDialogDescription className="[overflow-wrap:anywhere]">
-            About {formatArchiveBytes(bytes)} of archive packages and {rows.toLocaleString()} related data snapshots will be permanently deleted. This action cannot be undone.
+            约 {formatArchiveBytes(bytes)} 的归档包及 {rows.toLocaleString()} 条相关数据快照将被永久删除。此操作无法撤销。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>取消</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             disabled={pending}
@@ -1641,7 +1641,7 @@ function ArchiveDeleteDialog({
             }}
           >
             {pending && <Spinner data-icon="inline-start" />}
-            Delete permanently
+            永久删除
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -1687,7 +1687,7 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
         if (restored) onChanged();
       }
     } catch (error) {
-      toast.error(`Failed to load the archive list: ${(error as Error).message}`);
+      toast.error(`加载归档列表失败：${(error as Error).message}`);
     } finally {
       setLoading(false);
     }
@@ -1743,11 +1743,11 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
         const archiveID = Number(item.archive_id ?? item.id);
         if (item.ok && Number.isSafeInteger(archiveID) && archiveID > 0) pendingRestoreIDs.current.add(archiveID);
       }
-      if (succeeded > 0) toast.success(`Queued ${succeeded} tasks for restore`);
-      if (failed > 0) toast.error(`${failed} tasks could not be restored`);
+      if (succeeded > 0) toast.success(`已将 ${succeeded} 个任务加入恢复队列`);
+      if (failed > 0) toast.error(`${failed} 个任务无法恢复`);
       afterAction();
     } catch (error) {
-      toast.error(`Restore failed: ${(error as Error).message}`);
+      toast.error(`恢复失败：${(error as Error).message}`);
     }
   }
 
@@ -1768,11 +1768,11 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
           : await api.deleteTaskArchives(items.map((archive) => archive.id));
       const succeeded = result.items.filter((item) => item.ok).length;
       const failed = result.items.length - succeeded;
-      if (succeeded > 0) toast.success(`Queued ${succeeded} archives for permanent deletion`);
-      if (failed > 0) toast.error(`${failed} archives could not be deleted`);
+      if (succeeded > 0) toast.success(`已将 ${succeeded} 个归档加入永久删除队列`);
+      if (failed > 0) toast.error(`${failed} 个归档无法删除`);
       afterAction();
     } catch (error) {
-      toast.error(`Permanent delete failed: ${(error as Error).message}`);
+      toast.error(`永久删除失败：${(error as Error).message}`);
       throw error;
     }
   }
@@ -1782,10 +1782,10 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
       if (archive.state === "archive_failed") await api.archiveTask(String(archive.task_id));
       if (archive.state === "restore_failed") await api.restoreTaskArchive(archive.id);
       if (archive.state === "delete_failed") await api.deleteTaskArchive(archive.id);
-      toast.success("Re-queued for processing");
+      toast.success("已重新加入处理队列");
       afterAction();
     } catch (error) {
-      toast.error(`Retry failed: ${(error as Error).message}`);
+      toast.error(`重试失败：${(error as Error).message}`);
     }
   }
 
@@ -1801,7 +1801,7 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                 setQuery(event.target.value);
                 setPage(1);
               }}
-              placeholder="Search task name / description / ID"
+              placeholder="搜索任务名称 / 描述 / ID"
               className="pl-8"
             />
           </div>
@@ -1813,32 +1813,32 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
             }}
           >
             <SelectTrigger className="w-36">
-              <SelectValue placeholder="State" />
+              <SelectValue placeholder="状态" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All statuses</SelectItem>
-                <SelectItem value="archive_queued">Archive queued</SelectItem>
-                <SelectItem value="archiving">Archiving</SelectItem>
-                <SelectItem value="ready">Restorable</SelectItem>
-                <SelectItem value="restore_queued">Restore queued</SelectItem>
-                <SelectItem value="restoring">Restoring</SelectItem>
-                <SelectItem value="delete_queued">Delete queued</SelectItem>
-                <SelectItem value="deleting">Deleting</SelectItem>
-                <SelectItem value="archive_failed">Archive failed</SelectItem>
-                <SelectItem value="restore_failed">Restore failed</SelectItem>
-                <SelectItem value="delete_failed">Delete failed</SelectItem>
+                <SelectItem value="all">全部状态</SelectItem>
+                <SelectItem value="archive_queued">归档排队中</SelectItem>
+                <SelectItem value="archiving">归档中</SelectItem>
+                <SelectItem value="ready">可恢复</SelectItem>
+                <SelectItem value="restore_queued">恢复排队中</SelectItem>
+                <SelectItem value="restoring">恢复中</SelectItem>
+                <SelectItem value="delete_queued">删除排队中</SelectItem>
+                <SelectItem value="deleting">删除中</SelectItem>
+                <SelectItem value="archive_failed">归档失败</SelectItem>
+                <SelectItem value="restore_failed">恢复失败</SelectItem>
+                <SelectItem value="delete_failed">删除失败</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
-          <span className="text-muted-foreground text-xs tabular-nums">{total} archives</span>
+          <span className="text-muted-foreground text-xs tabular-nums">{total} 个归档</span>
           {selectedArchives.length > 0 && (
             <>
-              <span className="text-xs tabular-nums">{selectedArchives.length} selected</span>
+              <span className="text-xs tabular-nums">{selectedArchives.length} 个已选</span>
               {restorable.length > 0 && (
                 <Button size="sm" variant="outline" onClick={() => void restoreMany(restorable)}>
                   <Undo2Icon data-icon="inline-start" />
-                  Restore {restorable.length}
+                  恢复 {restorable.length}
                 </Button>
               )}
               {deletable.length > 0 && (
@@ -1848,7 +1848,7 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                   trigger={
                     <Button size="sm" variant="destructive">
                       <Trash2Icon data-icon="inline-start" />
-                      Permanently delete {deletable.length}
+                      永久删除 {deletable.length}
                     </Button>
                   }
                 />
@@ -1863,8 +1863,8 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
         ) : archives.length === 0 ? (
           <Empty className="mx-4 border border-dashed lg:mx-6">
             <EmptyHeader>
-              <EmptyTitle>No task archives</EmptyTitle>
-              <EmptyDescription>Paused or terminal tasks can be archived from the current task list.</EmptyDescription>
+              <EmptyTitle>暂无任务归档</EmptyTitle>
+              <EmptyDescription>可从当前任务列表归档已暂停或已终止的任务。</EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : (
@@ -1877,17 +1877,17 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                     onCheckedChange={(checked) =>
                       setSelected(checked === true ? new Set(selectable.map((archive) => archive.id)) : new Set())
                     }
-                    aria-label="Select the archives on this page"
+                    aria-label="选择本页归档"
                   />
                 </TableHead>
-                <TableHead>Task</TableHead>
-                <TableHead>Original status</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Archived at</TableHead>
-                <TableHead>Compressed size</TableHead>
-                <TableHead>Data records</TableHead>
-                <TableHead className="min-w-44">State</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>任务</TableHead>
+                <TableHead>原始状态</TableHead>
+                <TableHead>分类</TableHead>
+                <TableHead>归档时间</TableHead>
+                <TableHead>压缩后大小</TableHead>
+                <TableHead>数据记录</TableHead>
+                <TableHead className="min-w-44">状态</TableHead>
+                <TableHead className="text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -1909,13 +1909,13 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                             return next;
                           })
                         }
-                        aria-label={`Select task archive #${archive.task_id}`}
+                        aria-label={`选择任务归档 #${archive.task_id}`}
                       />
                     </TableCell>
                     <TableCell className="max-w-sm">
                       <div className="flex min-w-0 flex-col gap-0.5">
                         <span className="truncate font-medium">
-                          {archive.task_name || archive.task_description || `Task #${archive.task_id}`}
+                          {archive.task_name || archive.task_description || `任务 #${archive.task_id}`}
                         </span>
                         <span className="text-muted-foreground truncate text-xs">
                           #{archive.task_id} · {archive.task_description}
@@ -1925,13 +1925,13 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                     <TableCell>
                       <StatusBadge domain="task" value={archive.original_status} dot />
                     </TableCell>
-                    <TableCell className="text-muted-foreground">{archive.category_name || "Uncategorized"}</TableCell>
+                    <TableCell className="text-muted-foreground">{archive.category_name || "未分类"}</TableCell>
                     <TableCell className="text-muted-foreground whitespace-nowrap text-xs">
                       {archiveDate(archive.archived_at || archive.requested_at)}
                     </TableCell>
                     <TableCell
                       className="whitespace-nowrap text-xs"
-                      title={`Before compression: ${formatArchiveBytes(archive.original_size)}`}
+                      title={`压缩前：${formatArchiveBytes(archive.original_size)}`}
                     >
                       {archiveCompressionLabel(archive)}
                     </TableCell>
@@ -1963,8 +1963,8 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                             size="icon"
                             variant="ghost"
                             onClick={() => void retry(archive)}
-                            aria-label="Retry archive operation"
-                            title="Retry"
+                            aria-label="重试归档操作"
+                            title="重试"
                           >
                             <Undo2Icon />
                           </Button>
@@ -1974,8 +1974,8 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                             size="icon"
                             variant="ghost"
                             onClick={() => void restoreMany([archive])}
-                            aria-label="Restore task"
-                            title="Restore task"
+                            aria-label="恢复任务"
+                            title="恢复任务"
                           >
                             <Undo2Icon />
                           </Button>
@@ -1985,7 +1985,7 @@ function TaskArchivesPanel({ onChanged }: { onChanged: () => void }) {
                             archives={[archive]}
                             onConfirm={() => deleteMany([archive])}
                             trigger={
-                              <Button size="icon" variant="ghost" aria-label="Permanently delete archive" title="Permanently delete">
+                              <Button size="icon" variant="ghost" aria-label="永久删除归档" title="永久删除">
                                 <Trash2Icon />
                               </Button>
                             }
@@ -2068,7 +2068,7 @@ function DeleteOptionFields({
 
   return (
     <FieldSet disabled={disabled}>
-      <FieldLegend variant="label">Also clean up related data</FieldLegend>
+      <FieldLegend variant="label">同时清理相关数据</FieldLegend>
       <FieldGroup className="gap-3">
         <Field orientation="horizontal">
           <Checkbox
@@ -2077,8 +2077,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateAllOptions(checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-all-${idPrefix}`}>Delete all</FieldLabel>
-            <FieldDescription>Check every related data type below, including assets, traffic, files, findings, and LLM request/response records.</FieldDescription>
+            <FieldLabel htmlFor={`delete-all-${idPrefix}`}>全部删除</FieldLabel>
+            <FieldDescription>勾选以下所有相关数据类型，包括资产、流量、文件、漏洞和 LLM 请求/响应记录。</FieldDescription>
           </FieldContent>
         </Field>
         <Field orientation="horizontal">
@@ -2088,8 +2088,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateOption("delete_assets", checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-assets-${idPrefix}`}>Related assets</FieldLabel>
-            <FieldDescription>Delete assets that belong only to this task; shared assets are only detached from the current task.</FieldDescription>
+            <FieldLabel htmlFor={`delete-assets-${idPrefix}`}>相关资产</FieldLabel>
+            <FieldDescription>删除仅属于该任务的资产；共享资产仅与本任务解除关联。</FieldDescription>
           </FieldContent>
         </Field>
         <Field orientation="horizontal">
@@ -2099,8 +2099,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateOption("delete_traffic", checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-traffic-${idPrefix}`}>Related traffic</FieldLabel>
-            <FieldDescription>Deleted by the related assets' exact hostnames; traffic of shared hosts still referenced by other tasks is kept.</FieldDescription>
+            <FieldLabel htmlFor={`delete-traffic-${idPrefix}`}>相关流量</FieldLabel>
+            <FieldDescription>按相关资产的精确主机名删除；仍被其他任务引用的共享主机流量会保留。</FieldDescription>
           </FieldContent>
         </Field>
         <Field orientation="horizontal">
@@ -2110,8 +2110,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateOption("delete_files", checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-files-${idPrefix}`}>Task files</FieldLabel>
-            <FieldDescription>Delete uploaded files, command output, and other artifacts in the task's working directory.</FieldDescription>
+            <FieldLabel htmlFor={`delete-files-${idPrefix}`}>任务文件</FieldLabel>
+            <FieldDescription>删除任务工作目录中的上传文件、命令输出等产物。</FieldDescription>
           </FieldContent>
         </Field>
         <Field orientation="horizontal">
@@ -2121,8 +2121,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateOption("delete_findings", checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-findings-${idPrefix}`}>Related findings</FieldLabel>
-            <FieldDescription>Permanently delete the standalone finding records and finding reports produced by this task.</FieldDescription>
+            <FieldLabel htmlFor={`delete-findings-${idPrefix}`}>相关漏洞</FieldLabel>
+            <FieldDescription>永久删除该任务产生的独立漏洞记录和漏洞报告。</FieldDescription>
           </FieldContent>
         </Field>
         <Field orientation="horizontal">
@@ -2132,8 +2132,8 @@ function DeleteOptionFields({
             onCheckedChange={(checked) => updateOption("delete_llm_records", checked === true)}
           />
           <FieldContent>
-            <FieldLabel htmlFor={`delete-llm-records-${idPrefix}`}>LLM request/response records</FieldLabel>
-            <FieldDescription>Permanently delete the LLM requests, responses, tokens, and error details recorded for this task.</FieldDescription>
+            <FieldLabel htmlFor={`delete-llm-records-${idPrefix}`}>LLM 请求/响应记录</FieldLabel>
+            <FieldDescription>永久删除该任务记录的 LLM 请求、响应、token 及错误详情。</FieldDescription>
           </FieldContent>
         </Field>
       </FieldGroup>
@@ -2171,13 +2171,13 @@ function DeleteTaskDialog({
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button size="icon" variant="outline" aria-label="Delete task">
+        <Button size="icon" variant="outline" aria-label="删除任务">
           <Trash2Icon className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete task #{task.id}?</AlertDialogTitle>
+          <AlertDialogTitle>删除任务 #{task.id}?</AlertDialogTitle>
           <AlertDialogDescription className="break-words">
             {task.description ? (
               <>
@@ -2188,14 +2188,14 @@ function DeleteTaskDialog({
                 ”
               </>
             ) : (
-              "This task"
+              "此任务"
             )}
-            will be permanently deleted together with its execution records and exploration graph.
+            将与其执行记录和探索图一起被永久删除。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <DeleteOptionFields idPrefix={task.id} options={options} onOptionsChange={setOptions} disabled={deleting} />
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             disabled={deleting}
@@ -2205,7 +2205,7 @@ function DeleteTaskDialog({
             }}
           >
             {deleting && <Spinner data-icon="inline-start" />}
-            {deleting ? "Deleting" : "Delete"}
+            {deleting ? "删除中" : "删除"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -2243,23 +2243,23 @@ function MoveTasksCategoryDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
-          <FolderInputIcon data-icon="inline-start" /> Change category
+          <FolderInputIcon data-icon="inline-start" /> 修改分类
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Change the category of {count} selected tasks</DialogTitle>
-          <DialogDescription>The target category applies to all selected tasks; choosing "Uncategorized" moves them out of their current category.</DialogDescription>
+          <DialogTitle>修改 {count} 个选中任务的分类</DialogTitle>
+          <DialogDescription>目标分类应用于所有选中的任务；选择“未分类”会将其移出当前分类。</DialogDescription>
         </DialogHeader>
         <Field>
-          <FieldLabel htmlFor="bulk-category">Target category</FieldLabel>
+          <FieldLabel htmlFor="bulk-category">目标分类</FieldLabel>
           <Select value={target} onValueChange={setTarget} disabled={moving}>
             <SelectTrigger id="bulk-category" className="w-full">
-              <SelectValue placeholder="Select a category" />
+              <SelectValue placeholder="选择分类" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value={UNCATEGORIZED_VALUE}>Uncategorized</SelectItem>
+                <SelectItem value={UNCATEGORIZED_VALUE}>未分类</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={String(category.id)}>
                     {category.name}
@@ -2268,12 +2268,12 @@ function MoveTasksCategoryDialog({
               </SelectGroup>
             </SelectContent>
           </Select>
-          {categories.length === 0 && <FieldDescription>No categories yet; create one in "Category management" first.</FieldDescription>}
+          {categories.length === 0 && <FieldDescription>暂无分类；请先在“分类管理”中创建。</FieldDescription>}
         </Field>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline" disabled={moving}>
-              Cancel
+              取消
             </Button>
           </DialogClose>
           <Button
@@ -2283,7 +2283,7 @@ function MoveTasksCategoryDialog({
             }}
           >
             {moving && <Spinner data-icon="inline-start" />}
-            Move
+            移动
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -2327,14 +2327,14 @@ function BulkDeleteTasksDialog({
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
         <Button size="sm" variant="outline">
-          <Trash2Icon className="text-destructive" /> Delete selected {ids.length}
+          <Trash2Icon className="text-destructive" /> 删除所选任务 {ids.length}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-h-[85vh] overflow-y-auto">
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {ids.length} selected tasks?</AlertDialogTitle>
+          <AlertDialogTitle>删除 {ids.length} 个选中的任务？</AlertDialogTitle>
           <AlertDialogDescription>
-            The execution records and exploration graphs of these tasks will be permanently deleted; the cleanup options below apply to all selected tasks.
+            这些任务的执行记录和探索图将被永久删除；以下清理选项应用于所有选中的任务。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="text-muted-foreground flex flex-wrap gap-1 text-xs">
@@ -2343,11 +2343,11 @@ function BulkDeleteTasksDialog({
               #{id}
             </code>
           ))}
-          {ids.length > 30 && <span className="self-center">…{ids.length} in total</span>}
+          {ids.length > 30 && <span className="self-center">…{ids.length} 总计</span>}
         </div>
         <DeleteOptionFields idPrefix="bulk" options={options} onOptionsChange={setOptions} disabled={deleting} />
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
             disabled={deleting}
@@ -2357,7 +2357,7 @@ function BulkDeleteTasksDialog({
             }}
           >
             {deleting && <Spinner data-icon="inline-start" />}
-            {deleting ? `Deleting ${done}/${ids.length}` : `Delete ${ids.length} tasks`}
+            {deleting ? `删除中 ${done}/${ids.length}` : `删除 ${ids.length} 个任务`}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -2407,12 +2407,12 @@ function SourceTaskPicker({
         </ComboboxValue>
         <ComboboxChipsInput
           id="source-tasks"
-          placeholder={atLimit ? `Link up to ${MAX_SOURCE_TASKS} tasks` : "Search task ID, description, or goal"}
+          placeholder={atLimit ? `最多关联 ${MAX_SOURCE_TASKS} 个任务` : "搜索任务 ID、描述或目标"}
           disabled={atLimit}
         />
       </ComboboxChips>
       <ComboboxContent portalContainer={portalContainer}>
-        <ComboboxEmpty>No matching tasks</ComboboxEmpty>
+        <ComboboxEmpty>没有匹配的任务</ComboboxEmpty>
         <ComboboxList>
           {(taskID) => {
             const task = tasksByID.get(taskID);
@@ -2421,7 +2421,7 @@ function SourceTaskPicker({
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
-                      #{taskID} · {task?.description ?? "Unknown task"}
+                      #{taskID} · {task?.description ?? "未知任务"}
                     </p>
                     {task?.goal && <p className="text-muted-foreground truncate text-xs">{task.goal}</p>}
                   </div>
@@ -2492,9 +2492,9 @@ function CategoryPicker({
       onValueChange(created.id);
       setInputValue("");
       onCategoryCreated();
-      toast.success(`Category "${created.name}" created`);
+      toast.success(`分类 "${created.name}" 已创建`);
     } catch (e) {
-      toast.error(`Failed to create category: ${(e as Error).message}`);
+      toast.error(`创建分类失败：${(e as Error).message}`);
     } finally {
       setCreating(false);
     }
@@ -2518,12 +2518,12 @@ function CategoryPicker({
       <ComboboxChips>
         <ComboboxValue>
           {selectedIDs.map((id) => (
-            <ComboboxChip key={id}>{byID.get(id)?.name ?? "Unknown category"}</ComboboxChip>
+            <ComboboxChip key={id}>{byID.get(id)?.name ?? "未知分类"}</ComboboxChip>
           ))}
         </ComboboxValue>
         <ComboboxChipsInput
           id="task-category"
-          placeholder={selectedIDs.length ? "" : "Search categories, or type a new name and press Enter to create"}
+          placeholder={selectedIDs.length ? "" : "搜索分类，或输入新名称并按 Enter 创建"}
           onKeyDown={(e) => {
             // Enter with zero matches = create; with matches, keep base-ui's "Enter selects the highlighted item".
             if (e.key === "Enter" && matchCount === 0 && trimmed) {
@@ -2550,10 +2550,10 @@ function CategoryPicker({
               className="flex w-full items-center gap-2 px-2 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
             >
               {creating ? <Spinner className="size-4" /> : <PlusIcon className="size-4" />}
-              Create category "{trimmed}"
+              创建分类 "{trimmed}"
             </button>
           ) : (
-            <div className="px-2 py-2 text-sm text-muted-foreground">Type a name to search or create a category</div>
+            <div className="px-2 py-2 text-sm text-muted-foreground">输入名称以搜索或创建分类</div>
           ))}
       </ComboboxContent>
     </Combobox>
@@ -2561,21 +2561,21 @@ function CategoryPicker({
 }
 
 const COMPANY_SCOPE_LABELS: Record<string, string> = {
-  domain: "Domain",
+  domain: "域名",
   ip: "IP",
   cidr: "CIDR",
   icp: "ICP",
-  keyword: "Keyword",
+  keyword: "关键词",
 };
 
 function companyScopeSummary(company: Company): string {
   const rows = company.scope ?? [];
-  if (rows.length === 0) return "No asset scope configured";
+  if (rows.length === 0) return "未配置资产范围";
   const preview = rows.slice(0, 3).map((row) => {
     const value = row.raw || row.value || row.domain || row.net || "";
     return `${COMPANY_SCOPE_LABELS[row.kind] ?? row.kind}: ${value}`;
   });
-  return `${preview.join(" · ")}${rows.length > preview.length ? ` · ${rows.length - preview.length} more` : ""}`;
+  return `${preview.join(" · ")}${rows.length > preview.length ? ` · ${rows.length - preview.length} 项` : ""}`;
 }
 
 function CompanyPicker({
@@ -2610,13 +2610,13 @@ function CompanyPicker({
       <ComboboxChips>
         <ComboboxValue>
           {selectedIDs.map((companyID) => (
-            <ComboboxChip key={companyID}>{companiesByID.get(companyID)?.name ?? `Company #${companyID}`}</ComboboxChip>
+            <ComboboxChip key={companyID}>{companiesByID.get(companyID)?.name ?? `公司 #${companyID}`}</ComboboxChip>
           ))}
         </ComboboxValue>
-        <ComboboxChipsInput id="task-companies" placeholder="Search company name or asset scope" />
+        <ComboboxChipsInput id="task-companies" placeholder="搜索公司名称或资产范围" />
       </ComboboxChips>
       <ComboboxContent portalContainer={portalContainer}>
-        <ComboboxEmpty>No matching companies</ComboboxEmpty>
+        <ComboboxEmpty>没有匹配的公司</ComboboxEmpty>
         <ComboboxList>
           {(companyID) => {
             const company = companiesByID.get(companyID);
@@ -2624,9 +2624,9 @@ function CompanyPicker({
               <ComboboxItem key={companyID} value={companyID}>
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="min-w-0 flex-1 truncate font-medium">{company?.name ?? `Company #${companyID}`}</span>
+                    <span className="min-w-0 flex-1 truncate font-medium">{company?.name ?? `公司 #${companyID}`}</span>
                     <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
-                      {company?.asset_count ?? 0} assets
+                      {company?.asset_count ?? 0} 资产
                     </span>
                   </div>
                   {company && (
@@ -2675,7 +2675,7 @@ function CategoryDropTarget({
       onClick={onSelect}
     >
       <span className="block truncate font-medium text-sm">{name}</span>
-      <span className="block truncate text-muted-foreground text-xs">{isOver ? "Release to move" : `${count} tasks`}</span>
+      <span className="block truncate text-muted-foreground text-xs">{isOver ? "松开以移动" : `${count} 个任务`}</span>
     </button>
   );
 }
@@ -2700,8 +2700,8 @@ function DraggableCategoryTask({ task, disabled, moving }: { task: Task; disable
             disabled={disabled}
             {...listeners}
             {...attributes}
-            aria-label={`Drag task #${task.id}`}
-            title="Drag task"
+            aria-label={`拖动任务 #${task.id}`}
+            title="拖动任务"
           >
             <GripVerticalIcon />
           </Button>
@@ -2710,7 +2710,7 @@ function DraggableCategoryTask({ task, disabled, moving }: { task: Task; disable
       <ItemContent className="min-w-0">
         <ItemTitle className="w-full min-w-0">
           <Link href={`/function/tasks/detail?id=${encodeURIComponent(task.id)}`} className="truncate hover:underline">
-            {task.name?.trim() || task.description || `Task #${task.id}`}
+            {task.name?.trim() || task.description || `任务 #${task.id}`}
           </Link>
         </ItemTitle>
         <ItemDescription className="line-clamp-1">
@@ -2732,7 +2732,7 @@ function CategoryTaskDragPreview({ task }: { task: Task }) {
       </ItemMedia>
       <ItemContent className="min-w-0">
         <ItemTitle className="w-full min-w-0 truncate">
-          {task.name?.trim() || task.description || `Task #${task.id}`}
+          {task.name?.trim() || task.description || `任务 #${task.id}`}
         </ItemTitle>
         <ItemDescription className="line-clamp-1">#{task.id}</ItemDescription>
       </ItemContent>
@@ -2822,15 +2822,15 @@ function CategoryManagementSheet({
         const created = await api.createTaskCategory(name);
         setSelectedView(created.id);
         setDraftName(created.name);
-        toast.success("Category created");
+        toast.success("分类已创建");
       } else {
         const updated = await api.renameTaskCategory(selectedView, name);
         setDraftName(updated.name);
-        toast.success("Category updated");
+        toast.success("分类已更新");
       }
       onChanged();
     } catch (error) {
-      toast.error(`Failed to ${selectedView === "new" ? "create" : "update"} category: ${(error as Error).message}`);
+      toast.error(`${selectedView === "new" ? "创建" : "更新"}分类失败：${(error as Error).message}`);
     } finally {
       setSaving(false);
     }
@@ -2845,11 +2845,11 @@ function CategoryManagementSheet({
       const next = categories.find((category) => category.id !== deletedID);
       if (next) selectCategory(next);
       else selectUncategorized();
-      toast.success("Category deleted; its tasks moved to Uncategorized");
+      toast.success("分类已删除，其任务已移至未分类");
       setDeleteOpen(false);
       onChanged();
     } catch (error) {
-      toast.error(`Failed to delete category: ${(error as Error).message}`);
+      toast.error(`删除分类失败：${(error as Error).message}`);
     } finally {
       setDeleting(false);
     }
@@ -2860,7 +2860,7 @@ function CategoryManagementSheet({
     const category =
       destination === "uncategorized" ? null : (categories.find((item) => item.id === Number(destination)) ?? null);
     if (destination !== "uncategorized" && !category) {
-      toast.error("Target category does not exist; refresh and try again");
+      toast.error("目标分类不存在，请刷新后重试");
       return;
     }
     if (task.category_id === category?.id || (task.category_id == null && category == null)) return;
@@ -2869,9 +2869,9 @@ function CategoryManagementSheet({
     try {
       await api.updateTaskCategory(task.id, category?.id);
       onTaskMoved(task.id, category);
-      toast.success(`Task #${task.id} moved to "${category?.name ?? "Uncategorized"}"`);
+      toast.success(`任务 #${task.id} 已移至 "${category?.name ?? "未分类"}"`);
     } catch (error) {
-      toast.error(`Failed to move task: ${(error as Error).message}`);
+      toast.error(`移动任务失败：${(error as Error).message}`);
     } finally {
       setMovingTaskID(null);
     }
@@ -2894,7 +2894,7 @@ function CategoryManagementSheet({
     void moveTask(task, destination.slice("category:".length));
   }
 
-  const saveLabel = saving ? "Saving" : selectedView === "new" ? "Create category" : "Save changes";
+  const saveLabel = saving ? "保存中" : selectedView === "new" ? "创建分类" : "保存更改";
 
   return (
     <>
@@ -2902,13 +2902,13 @@ function CategoryManagementSheet({
         <SheetTrigger asChild>
           <Button size="sm" variant="outline">
             <TagsIcon data-icon="inline-start" />
-            Category management
+            分类管理
           </Button>
         </SheetTrigger>
         <SheetContent className="grid h-full w-full! max-w-none! grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden p-0 sm:w-[48rem]! sm:max-w-[48rem]!">
           <SheetHeader className="border-b px-6 py-5">
-            <SheetTitle>Task category management</SheetTitle>
-            <SheetDescription>Categories are used for task filtering and archiving; edits never affect task execution, and deletion moves tasks to Uncategorized.</SheetDescription>
+            <SheetTitle>任务分类管理</SheetTitle>
+            <SheetDescription>分类用于任务筛选和归档；编辑不会影响任务执行，删除后任务将移至未分类。</SheetDescription>
           </SheetHeader>
           <DndContext
             sensors={sensors}
@@ -2920,13 +2920,13 @@ function CategoryManagementSheet({
               <div className="flex min-h-0 flex-col border-b p-3 lg:border-r lg:border-b-0">
                 <Button type="button" variant="outline" className="w-full" onClick={startNew}>
                   <PlusIcon data-icon="inline-start" />
-                  New category
+                  新建分类
                 </Button>
                 <ScrollArea className="mt-2 max-h-44 lg:max-h-none lg:flex-1">
                   <div className="flex flex-col gap-1 pr-2">
                     <CategoryDropTarget
                       value="uncategorized"
-                      name="Uncategorized"
+                      name="未分类"
                       count={uncategorizedCount}
                       selected={selectedView === "uncategorized"}
                       disabled={movingTaskID != null}
@@ -2950,12 +2950,12 @@ function CategoryManagementSheet({
                 <FieldGroup className="p-6">
                   {selectedView !== "uncategorized" && (
                     <Field>
-                      <FieldLabel htmlFor="task-category-name">Category name</FieldLabel>
+                      <FieldLabel htmlFor="task-category-name">分类名称</FieldLabel>
                       <Input
                         id="task-category-name"
                         value={draftName}
                         onChange={(event) => setDraftName(event.target.value)}
-                        placeholder="e.g. External assessment"
+                        placeholder="例如：外部评估"
                         maxLength={80}
                         onKeyDown={(event) => {
                           if (event.key === "Enter") void saveCategory();
@@ -2963,8 +2963,8 @@ function CategoryManagementSheet({
                       />
                       <FieldDescription>
                         {selectedCategory
-                          ? `${selectedCategory.task_count} tasks currently use this category. Renaming updates the task list accordingly.`
-                          : "Once created, it is usable in the create-task form and task list filters."}
+                          ? `当前有 ${selectedCategory.task_count} 个任务使用此分类。重命名后任务列表将相应更新。`
+                          : "创建后即可在任务创建表单和任务列表筛选中使用。"}
                       </FieldDescription>
                     </Field>
                   )}
@@ -2972,19 +2972,19 @@ function CategoryManagementSheet({
                     <Field>
                       <div className="flex flex-wrap items-end justify-between gap-2">
                         <div className="flex min-w-0 flex-col gap-1">
-                          <FieldLabel>{selectedCategory ? "Category tasks" : "Uncategorized tasks"}</FieldLabel>
+                          <FieldLabel>{selectedCategory ? "分类内任务" : "未分类任务"}</FieldLabel>
                           <FieldDescription>
                             {selectedCategory
-                              ? `This category contains ${visibleTasks.length} tasks.`
-                              : `${visibleTasks.length} tasks are not yet categorized.`}
+                              ? `此分类包含 ${visibleTasks.length} 个任务。`
+                              : `${visibleTasks.length} 个任务尚未分类。`}
                           </FieldDescription>
                         </div>
                       </div>
                       {visibleTasks.length === 0 ? (
                         <Empty className="min-h-36 border">
                           <EmptyHeader>
-                            <EmptyTitle>{selectedCategory ? "No tasks in this category" : "No uncategorized tasks"}</EmptyTitle>
-                            <EmptyDescription>Content appears here once tasks are assigned.</EmptyDescription>
+                            <EmptyTitle>{selectedCategory ? "此分类暂无任务" : "暂无未分类任务"}</EmptyTitle>
+                            <EmptyDescription>分配任务后，内容将显示在此处。</EmptyDescription>
                           </EmptyHeader>
                         </Empty>
                       ) : (
@@ -3016,11 +3016,11 @@ function CategoryManagementSheet({
                 onClick={() => setDeleteOpen(true)}
               >
                 <Trash2Icon data-icon="inline-start" />
-                Delete category
+                删除分类
               </Button>
             )}
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Close
+              关闭
             </Button>
             {selectedView !== "uncategorized" && (
               <Button
@@ -3038,13 +3038,13 @@ function CategoryManagementSheet({
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete category "{selectedCategory?.name || "Unnamed category"}"?</AlertDialogTitle>
+            <AlertDialogTitle>删除分类 "{selectedCategory?.name || "未命名分类"}"？</AlertDialogTitle>
             <AlertDialogDescription>
-              After the category is deleted, its {selectedCategory?.task_count ?? 0} tasks move to "Uncategorized" automatically; task data is not deleted.
+              删除分类后，其中的 {selectedCategory?.task_count ?? 0} 个任务将自动移至“未分类”；任务数据不会被删除。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               disabled={deleting}
@@ -3054,7 +3054,7 @@ function CategoryManagementSheet({
               }}
             >
               {deleting && <Spinner data-icon="inline-start" />}
-              {deleting ? "Deleting" : "Delete"}
+              {deleting ? "删除中" : "删除"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -3127,7 +3127,7 @@ function CreateTaskSheet({
       setDescription((prev) => appendUploads(prev, r.attachments));
       setUploadCount((n) => n + r.attachments.length);
     } catch (e) {
-      toast.error("Upload failed: " + (e as Error).message);
+      toast.error("上传失败：" + (e as Error).message);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = ""; // allow re-picking the same file
@@ -3136,11 +3136,11 @@ function CreateTaskSheet({
 
   async function createTask() {
     if (!description.trim() || !goal.trim()) {
-      toast.error("Please fill in the description and goal");
+      toast.error("请填写描述和目标");
       return;
     }
     if (sourceTaskIDs.length > MAX_SOURCE_TASKS) {
-      toast.error(`Link up to ${MAX_SOURCE_TASKS} source tasks`);
+      toast.error(`最多关联 ${MAX_SOURCE_TASKS} 个源任务`);
       return;
     }
     setCreating(true);
@@ -3167,7 +3167,7 @@ function CreateTaskSheet({
           .map((c) => ({ domain: c.domain.trim(), username: c.username.trim(), password: c.password, note: c.note?.trim() ?? "" }))
           .filter((c) => c.domain !== "" && c.username !== ""),
       });
-      toast.success("Task created");
+      toast.success("任务已创建");
       setName("");
       setCategoryID(undefined);
       setDescription("");
@@ -3187,7 +3187,7 @@ function CreateTaskSheet({
       setOpen(false);
       onCreated();
     } catch (e) {
-      toast.error("Create failed: " + (e as Error).message);
+      toast.error("创建失败：" + (e as Error).message);
     } finally {
       setCreating(false);
     }
@@ -3197,7 +3197,7 @@ function CreateTaskSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button size="sm">
-          <PlusIcon /> New task
+          <PlusIcon /> 新建任务
         </Button>
       </SheetTrigger>
       {/* A 45vw-wide right drawer: full-height and scrollable, so long forms are no longer bound by dialog height. Narrow screens fall back to full width.
@@ -3208,8 +3208,8 @@ function CreateTaskSheet({
         className="w-full! max-w-none! gap-0 p-0 sm:w-[45vw]! sm:max-w-[45vw]!"
       >
         <SheetHeader className="border-b p-6">
-          <SheetTitle>New task</SheetTitle>
-          <SheetDescription>Fill in the test target and goal; advanced parameters can be expanded as needed.</SheetDescription>
+          <SheetTitle>新建任务</SheetTitle>
+          <SheetDescription>填写测试对象和目标；可按需展开高级参数。</SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-6">
@@ -3231,16 +3231,16 @@ function CreateTaskSheet({
               portalContainer={sheetContentRef}
             />
             <div className="grid gap-2">
-              <Label htmlFor="name">Name (optional)</Label>
+              <Label htmlFor="name">名称（可选）</Label>
               <Input
                 id="name"
-                placeholder="A recognizable name for the task, e.g. Acme website penetration test"
+                placeholder="便于识别的任务名称，例如：Acme 网站渗透测试"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
             <Field>
-              <FieldLabel htmlFor="task-category">Task category</FieldLabel>
+              <FieldLabel htmlFor="task-category">任务分类</FieldLabel>
               <CategoryPicker
                 categories={categories}
                 value={categoryID}
@@ -3248,14 +3248,14 @@ function CreateTaskSheet({
                 onCategoryCreated={onCategoriesChanged}
                 portalContainer={sheetContentRef}
               />
-              <FieldDescription>Optional, single category; used for task list filtering and archiving, never affecting agent execution.</FieldDescription>
+              <FieldDescription>可选，单个分类；用于任务列表筛选和归档，不影响智能体执行。</FieldDescription>
             </Field>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">描述</Label>
               <Textarea
                 id="description"
                 className="min-h-32"
-                placeholder="Test target and background, e.g. test the example.com site"
+                placeholder="测试对象和背景，例如：测试 example.com 网站"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -3276,27 +3276,27 @@ function CreateTaskSheet({
                   disabled={uploading}
                 >
                   {uploading ? <Loader2Icon className="animate-spin" /> : <PaperclipIcon />}
-                  Upload files
+                  上传文件
                 </Button>
                 <span className="text-muted-foreground text-xs">
                   {uploadCount > 0
-                    ? `${uploadCount} files uploaded; their absolute paths were appended to the end of the description (editable)`
-                    : "Multi-select; after upload, absolute file paths are appended to the description for the worker to open with Read/Bash"}
+                    ? `已上传 ${uploadCount} 个文件；其绝对路径已追加到描述末尾（可编辑）`
+                    : "支持多选；上传后，文件绝对路径将追加到描述中，供执行器使用 Read/Bash 打开"}
                 </span>
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="goal">Goal</Label>
+              <Label htmlFor="goal">目标</Label>
               <Textarea
                 id="goal"
                 className="min-h-32"
-                placeholder="What to achieve, e.g. gain admin panel access or server privileges"
+                placeholder="要实现的目标，例如：获取管理面板访问权限或服务器权限"
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
               />
             </div>
             <Field>
-              <FieldLabel htmlFor="source-tasks">Linked tasks</FieldLabel>
+              <FieldLabel htmlFor="source-tasks">关联任务</FieldLabel>
               <SourceTaskPicker
                 tasks={tasks}
                 value={sourceTaskIDs}
@@ -3304,12 +3304,12 @@ function CreateTaskSheet({
                 portalContainer={sheetContentRef}
               />
               <FieldDescription>
-                Link up to {MAX_SOURCE_TASKS}{" "}
-                tasks. Live, read-only inheritance of the selected tasks' persistent blackboards, asset scope, and related traffic; the new task writes to its own blackboard.
+                最多关联 {MAX_SOURCE_TASKS}{" "}
+                个任务。实时只读继承所选任务的持久化黑板、资产范围和相关流量；新任务写入自己的黑板。
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="task-companies">Linked company asset scope</FieldLabel>
+              <FieldLabel htmlFor="task-companies">关联公司资产范围</FieldLabel>
               <CompanyPicker
                 companies={companies}
                 value={companyIDs}
@@ -3317,19 +3317,19 @@ function CreateTaskSheet({
                 portalContainer={sheetContentRef}
               />
               <FieldDescription>
-                On task creation, the selected companies' current assets are added to "Test assets", and their domains, IPs, CIDRs, ICPs, and company keywords are provided to the agent
-                as scope context; no intents are generated automatically and execution goals are not forced to change.
+                创建任务时，所选公司的当前资产将添加到“测试资产”中，其域名、IP、CIDR、ICP 和公司关键词将提供给智能体
+                作为范围上下文；不会自动生成意图，也不会强制更改执行目标。
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="task-intercept-rules">Task-level asset intercept / allow rules (optional)</FieldLabel>
+              <FieldLabel htmlFor="task-intercept-rules">任务级资产拦截 / 放行规则（可选）</FieldLabel>
               <AssetInterceptRulesEditor value={interceptRules} onChange={setInterceptRules} />
               <FieldDescription>
-                Applies to this task only and is not written to global rules. Evaluation order: "Block" rules (including global ones) match first, and a hit forbids testing; with no hit and "Allow" rules configured for this task, an asset must match an allow rule to be permitted, otherwise testing is likewise forbidden; with no allow rules configured, no whitelist is active.
+                仅应用于此任务，不写入全局规则。评估顺序：先匹配“拦截”规则（包括全局规则），命中则禁止测试；若未命中且此任务配置了“放行”规则，资产必须匹配放行规则才允许测试，否则同样禁止测试；未配置放行规则时，不启用白名单。
               </FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="llm-profiles">LLM config chain</FieldLabel>
+              <FieldLabel htmlFor="llm-profiles">LLM 配置链</FieldLabel>
               <TaskLLMProfileChain
                 profiles={profiles}
                 value={llmProfileIDs}
@@ -3339,25 +3339,25 @@ function CreateTaskSheet({
                 inputId="llm-profiles"
                 portalContainer={sheetContentRef}
               />
-              <FieldDescription>Reorder profiles to choose worker rotation order or failover priority. Saving the chain resets exhausted profiles.</FieldDescription>
+              <FieldDescription>调整配置顺序以选择执行器轮换顺序或故障转移优先级。保存配置链会重置已耗尽的配置。</FieldDescription>
             </Field>
             <Field>
-              <FieldLabel htmlFor="task-credentials">Test accounts (optional)</FieldLabel>
+              <FieldLabel htmlFor="task-credentials">测试账号（可选）</FieldLabel>
               <div className="grid gap-2">
                 {credentials.map((c, i) => (
                   <div key={i} className="grid gap-2 sm:grid-cols-[1fr_1fr_1fr_auto]">
                     <Input
-                      placeholder="domain (e.g. target.example.com)"
+                      placeholder="域名（例如 target.example.com）"
                       value={c.domain}
                       onChange={(e) => setCredentials((prev) => prev.map((x, j) => (j === i ? { ...x, domain: e.target.value } : x)))}
                     />
                     <Input
-                      placeholder="email or username"
+                      placeholder="邮箱或用户名"
                       value={c.username}
                       onChange={(e) => setCredentials((prev) => prev.map((x, j) => (j === i ? { ...x, username: e.target.value } : x)))}
                     />
                     <Input
-                      placeholder="password (empty = agent generates)"
+                      placeholder="密码（留空由智能体生成）"
                       value={c.password}
                       onChange={(e) => setCredentials((prev) => prev.map((x, j) => (j === i ? { ...x, password: e.target.value } : x)))}
                     />
@@ -3365,14 +3365,14 @@ function CreateTaskSheet({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      aria-label="Remove account"
+                      aria-label="移除账号"
                       onClick={() => setCredentials((prev) => prev.filter((_, j) => j !== i))}
                     >
                       <TrashIcon />
                     </Button>
                     <Input
                       className="sm:col-span-4"
-                      placeholder="note (optional, e.g. program alias account)"
+                      placeholder="备注（可选，例如项目别名账号）"
                       value={c.note ?? ""}
                       onChange={(e) => setCredentials((prev) => prev.map((x, j) => (j === i ? { ...x, note: e.target.value } : x)))}
                     />
@@ -3385,13 +3385,13 @@ function CreateTaskSheet({
                   className="w-fit"
                   onClick={() => setCredentials((prev) => [...prev, { domain: "", username: "", password: "", note: "" }])}
                 >
-                  <PlusIcon className="size-4" /> Add account
+                  <PlusIcon className="size-4" /> 添加账号
                 </Button>
               </div>
               <FieldDescription>
-                Test accounts reused by the agent for authenticated testing. Leave the password empty to have the agent register that
-                account itself and record the password it chose. Use dedicated test accounts only — anything declared here is sent to
-                the configured LLM provider during the task.
+                智能体复用这些测试账号进行身份验证测试。密码留空时，智能体将自行注册该
+                账号并记录所选密码。请仅使用专用测试账号——此处填写的所有内容都会在任务期间发送给
+                配置的 LLM 提供商。
               </FieldDescription>
             </Field>
 
@@ -3399,39 +3399,39 @@ function CreateTaskSheet({
             <Collapsible>
               <CollapsibleTrigger className="group flex w-full items-center gap-2 border-t pt-4 text-sm font-medium">
                 <ChevronRightIcon className="text-muted-foreground size-4 transition-transform group-data-[state=open]:rotate-90" />
-                Advanced settings
-                <span className="text-muted-foreground ml-auto text-xs font-normal">Timeout · Heartbeat · First intent</span>
+                高级设置
+                <span className="text-muted-foreground ml-auto text-xs font-normal">超时 · 心跳 · 首个意图</span>
               </CollapsibleTrigger>
               <CollapsibleContent className="grid gap-5 pt-5">
                 <div className="grid gap-2">
-                  <Label htmlFor="timeout-min">Task timeout (minutes, optional)</Label>
+                  <Label htmlFor="timeout-min">任务超时（分钟，可选）</Label>
                   <Input
                     id="timeout-min"
                     type="number"
                     min={0}
                     className="w-40"
-                    placeholder="Empty = no limit"
+                    placeholder="留空表示不限制"
                     value={timeoutMin}
                     onChange={(e) => setTimeoutMin(e.target.value)}
                   />
                   <p className="text-muted-foreground text-xs">
-                    When the time is up, a graceful wind-down is triggered (each agent writes back + the planner makes the final verdict) and the task enters the timeout terminal state.
+                    时间到后将触发平稳收尾（各智能体回写，规划器作出最终判定），任务随后进入已超时终态。
                   </p>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="heartbeat-min">planner heartbeat (minutes)</Label>
+                  <Label htmlFor="heartbeat-min">规划器心跳（分钟）</Label>
                   <Input
                     id="heartbeat-min"
                     type="number"
                     min={10}
                     className="w-40"
-                    placeholder="Default 10"
+                    placeholder="默认 10"
                     value={heartbeatMin}
                     onChange={(e) => setHeartbeatMin(e.target.value)}
                   />
                   <p className="text-muted-foreground text-xs">
-                    When this much time has passed since the last planning round ended or the task started, with no
-                    triggers in between, a planning round fires automatically (deadlock backstop + wakes supervision of running workers). Minimum 10 minutes.
+                    自上一轮规划结束或任务启动后经过此时间，且期间没有
+                    其他触发事件时，将自动启动一轮规划（防止死锁，并唤醒对运行中执行器的监督）。最少 10 分钟。
                   </p>
                 </div>
                 <div className="grid gap-2">
@@ -3441,11 +3441,11 @@ function CreateTaskSheet({
                       checked={seedFirstIntent}
                       onCheckedChange={(v) => setSeedFirstIntent(!!v)}
                     />
-                    Dispatch the first intent directly (description + goal)
+                    直接派发首个意图（描述 + 目标）
                   </label>
                   <p className="text-muted-foreground text-xs">
-                    When enabled, the "description + goal" is dispatched as one intent right at creation; the worker starts without waiting for the first planning round and the planner
-                    takes over afterwards to judge/follow up. Recommended for settings like CTF where one run usually solves it directly; disabled follows the standard plan-then-execute flow.
+                    启用后，创建时即将“描述 + 目标”作为一个意图派发；执行器无需等待首轮规划即可启动，之后由规划器
+                    接管判定和跟进。推荐用于 CTF 等通常一次执行即可解决的场景；禁用时遵循先规划再执行的标准流程。
                   </p>
                 </div>
                 <div className="grid gap-2">
@@ -3455,11 +3455,11 @@ function CreateTaskSheet({
                       checked={coverageEnabled}
                       onCheckedChange={(v) => setCoverageEnabled(!!v)}
                     />
-                    Asset coverage feature
+                    资产覆盖功能
                   </label>
                   <p className="text-muted-foreground text-xs">
-                    On by default: computes and displays test coverage, shows testing progress on the situational graph, and automatically accumulates the test scope. When off, coverage is no longer computed or displayed,
-                    the situational graph shows assets without progress, and agents no longer receive scope-related tools. Disabling does not affect "Linked company asset scope".
+                    默认开启：计算并显示测试覆盖，在态势图上展示测试进度，并自动累积测试范围。关闭后，不再计算或显示覆盖，
+                    态势图仅显示资产而不显示进度，智能体也不再接收范围相关工具。禁用不影响“关联公司资产范围”。
                   </p>
                 </div>
               </CollapsibleContent>
@@ -3469,11 +3469,11 @@ function CreateTaskSheet({
 
         <SheetFooter className="flex-row justify-end gap-2 border-t p-4">
           <SheetClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">取消</Button>
           </SheetClose>
           <Button onClick={createTask} disabled={creating || uploading}>
             {creating && <Spinner data-icon="inline-start" />}
-            {creating ? "Creating" : "Create"}
+            {creating ? "创建中" : "创建"}
           </Button>
         </SheetFooter>
       </SheetContent>

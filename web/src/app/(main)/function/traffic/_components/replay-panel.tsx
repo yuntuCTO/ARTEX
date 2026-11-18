@@ -46,18 +46,18 @@ function initialForm(exchange: TrafficExchange, raw: string): ReplayForm {
 }
 
 const ERROR_TITLES: Record<number, string> = {
-  400: "Invalid request",
-  413: "Request body too large",
-  502: "Proxy or upstream error",
-  503: "Traffic capture is disabled",
-  504: "Timed out",
+  400: "无效请求",
+  413: "请求正文过大",
+  502: "代理或上游服务出错",
+  503: "流量捕获已禁用",
+  504: "已超时",
 };
 
 // The server's message, under a title that says what the status means.
 function describeError(e: unknown): { title: string; message: string } {
   const message = e instanceof Error ? e.message : String(e);
-  if (!(e instanceof ApiError)) return { title: "Replay failed", message };
-  return { title: ERROR_TITLES[e.status] ?? `Replay failed (${e.status})`, message };
+  if (!(e instanceof ApiError)) return { title: "重放失败", message };
+  return { title: ERROR_TITLES[e.status] ?? `重放失败（${e.status}）`, message };
 }
 
 // ReplayPanel edits the selected exchange's request and sends it again through
@@ -135,7 +135,7 @@ export function ReplayPanel({
     <div className="space-y-4 p-5">
       <div className="flex gap-2">
         <Input
-          aria-label="Method"
+          aria-label="方法"
           className="w-32 font-mono uppercase"
           list={methodListId}
           value={form.method}
@@ -156,42 +156,42 @@ export function ReplayPanel({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="font-medium text-sm">Headers</span>
+          <span className="font-medium text-sm">请求头</span>
           <Button
             size="sm"
             variant="outline"
             onClick={() => update({ rows: [...form.rows, ...toRows([{ name: "", value: "" }])] })}
           >
             <PlusIcon />
-            Add header
+            添加请求头
           </Button>
         </div>
-        <p className="text-muted-foreground text-xs">Host is taken from the URL.</p>
+        <p className="text-muted-foreground text-xs">Host 请求头根据 URL 设置。</p>
         {form.dropped.length > 0 && (
           <p className="text-muted-foreground text-xs">
-            Not sent (hop-by-hop or recomputed by the server): {form.dropped.join(", ")}
+            不会发送的请求头（逐跳请求头或由服务器重新计算）：{form.dropped.join(", ")}
           </p>
         )}
         {form.rows.map((row) => (
           <div key={row.key} className="flex items-center gap-2">
             <Input
-              aria-label="Header name"
+              aria-label="请求头名称"
               className={cn("w-48 font-mono text-xs", ignored.has(row.name.trim().toLowerCase()) && "line-through")}
-              placeholder="Name"
+              placeholder="名称"
               value={row.name}
               onChange={(e) => updateRow(row.key, { name: e.target.value })}
             />
             <Input
-              aria-label="Header value"
+              aria-label="请求头值"
               className="flex-1 font-mono text-xs"
-              placeholder="Value"
+              placeholder="值"
               value={row.value}
               onChange={(e) => updateRow(row.key, { value: e.target.value })}
             />
             <Button
               size="icon"
               variant="ghost"
-              aria-label="Remove header"
+              aria-label="移除请求头"
               onClick={() => update({ rows: form.rows.filter((r) => r.key !== row.key) })}
             >
               <XIcon />
@@ -199,28 +199,29 @@ export function ReplayPanel({
           </div>
         ))}
         {ignored.size > 0 && (
-          <p className="text-muted-foreground text-xs">Struck-through headers are not sent by the server.</p>
+          <p className="text-muted-foreground text-xs">
+            上方列表中以删除线标记的请求头仅供参考。服务器在重放请求时不会将这些请求头发送给目标。
+          </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <span className="font-medium text-sm">Body</span>
+        <span className="font-medium text-sm">正文</span>
         {form.binary ? (
           <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-amber-700 text-xs dark:text-amber-400">
-            The recorded body is binary (it contains NUL bytes). Replaying a binary body is not supported.
+            记录的正文是二进制数据（包含 NUL 字节）。不支持重放二进制正文。
           </p>
         ) : (
           <>
             <Textarea
-              aria-label="Body"
+              aria-label="正文"
               className="font-mono text-xs"
               value={form.body}
               onChange={(e) => update({ body: e.target.value })}
             />
             {form.bodyPreviewOnly && (
               <p className="text-amber-700 text-xs dark:text-amber-400">
-                The recorded body was too large to keep inline; only its preview is loaded, so replay is disabled for
-                this exchange.
+                记录的正文过大，无法内联存储。目前仅加载了预览，因此无法重放这次请求。
               </p>
             )}
           </>
@@ -229,7 +230,7 @@ export function ReplayPanel({
 
       <Button onClick={send} disabled={!canSend}>
         {sending ? <Loader2Icon className="animate-spin" /> : <SendIcon />}
-        Send
+        发送
       </Button>
 
       {error && (
@@ -246,19 +247,19 @@ export function ReplayPanel({
               {result.status}
             </Badge>
             <span className="text-muted-foreground tabular-nums">{result.duration_ms} ms</span>
-            {result.truncated && <Badge variant="outline">truncated</Badge>}
+            {result.truncated && <Badge variant="outline">已截断</Badge>}
           </div>
           {!result.recorded && (
             <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-amber-700 text-xs dark:text-amber-400">
-              Passthrough host: the response is shown here but was not recorded.
+              直通主机：响应仅在此处显示，未被记录。
             </div>
           )}
           {sortedHeaders.length > 0 && (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Header</TableHead>
-                  <TableHead>Value</TableHead>
+                  <TableHead>响应头</TableHead>
+                  <TableHead>值</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

@@ -16,24 +16,24 @@ import type { NoiseProfileName, NoiseStatus } from "@/lib/types";
 // Mirrors egress.Profiles in egress/egress.go; the jitter of one send is
 // min(Jitter/RPS, 250 ms).
 const profiles: { value: NoiseProfileName; label: string; limits: string }[] = [
-  { value: "off", label: "Off", limits: "Off: requests and their timing are unchanged, and nothing is counted." },
+  { value: "off", label: "关闭", limits: "关闭：不改变请求及其发送时机，也不进行统计。" },
   {
     value: "quiet",
-    label: "Quiet",
+    label: "低噪",
     limits:
-      "2 req/s per host (burst 4), 1 in flight per host, 8 overall, jitter up to 250 ms, identical GETs of a task cached 60 s, up to 3 retries on 429/503.",
+      "每主机每秒 2 个请求（突发 4 个），每主机并发 1 个、总并发 8 个，抖动最长 250 ms，同一任务的相同 GET 请求缓存 60 秒，遇到 429/503 最多重试 3 次。",
   },
   {
     value: "balanced",
-    label: "Balanced",
+    label: "均衡",
     limits:
-      "5 req/s per host (burst 10), 2 in flight per host, 16 overall, jitter up to 40 ms, identical GETs of a task cached 30 s, up to 3 retries on 429/503.",
+      "每主机每秒 5 个请求（突发 10 个），每主机并发 2 个、总并发 16 个，抖动最长 40 ms，同一任务的相同 GET 请求缓存 30 秒，遇到 429/503 最多重试 3 次。",
   },
   {
     value: "aggressive",
-    label: "Aggressive",
+    label: "激进",
     limits:
-      "20 req/s per host (burst 40), 4 in flight per host, 32 overall, jitter up to 5 ms, identical GETs of a task cached 10 s, up to 2 retries on 429/503.",
+      "每主机每秒 20 个请求（突发 40 个），每主机并发 4 个、总并发 32 个，抖动最长 5 ms，同一任务的相同 GET 请求缓存 10 秒，遇到 429/503 最多重试 2 次。",
   },
 ];
 
@@ -49,7 +49,7 @@ export function NoiseProfileCard() {
     api
       .noiseStatus()
       .then(setStatus)
-      .catch((e) => toast.error(`Failed to load the noise counters: ${(e as Error).message}`))
+      .catch((e) => toast.error(`加载噪声计数失败：${(e as Error).message}`))
       .finally(() => setLoading(false));
   }, []);
   React.useEffect(() => {
@@ -61,10 +61,10 @@ export function NoiseProfileCard() {
     api
       .setSettings({ noise_profile: value })
       .then(() => {
-        toast.success(`Noise profile set to ${value}`);
+        toast.success(`噪声配置已设为${value}`);
         refresh();
       })
-      .catch((e) => toast.error(`Save failed: ${(e as Error).message}`))
+      .catch((e) => toast.error(`保存失败：${(e as Error).message}`))
       .finally(() => setSaving(false));
   };
 
@@ -74,21 +74,21 @@ export function NoiseProfileCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <GaugeIcon className="size-4" />
-          Target noise
+          目标噪声
         </CardTitle>
         <CardDescription>
-          Paces the requests ARTEX itself sends to targets (WebFetch, http custom tools, the enrich probe) and sets the
-          low-and-slow guidance in agent prompts. With traffic capture on, Bash commands that use the proxy (curl,
-          wget, python-requests…) are paced too, by rate and jitter only: the in-flight, cache and retry limits apply
-          to ARTEX's own requests. Raw scanners such as nmap, and commands that bypass the proxy, are not paced; this
-          is best effort, not a security boundary. This setting takes precedence over ARTEX_NOISE_PROFILE and applies
-          to the next request.
+          控制云途Agent 自身向目标发送请求（WebFetch、http 自定义工具、enrich 探针）的节奏，并在
+          智能体提示词中设置低速低噪指导。启用流量捕获后，使用代理的 Bash 命令（curl、
+          wget、python-requests…）也会受到速率和抖动控制：并发、缓存和重试限制仅适用于
+          云途Agent 自身的请求。nmap 等原始扫描器以及绕过代理的命令不受节奏控制；这是
+          尽力而为的机制，而非安全边界。此设置优先于 ARTEX_NOISE_PROFILE，并对
+          下一次请求生效。
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <Label htmlFor="noise-profile" className="text-sm font-normal text-muted-foreground">
-            Profile
+            配置
           </Label>
           <Select
             value={status?.profile ?? ""}
@@ -96,7 +96,7 @@ export function NoiseProfileCard() {
             onValueChange={(v) => save(v as NoiseProfileName)}
           >
             <SelectTrigger id="noise-profile" className="w-48 shrink-0">
-              <SelectValue placeholder="Loading…" />
+              <SelectValue placeholder="加载中…" />
             </SelectTrigger>
             <SelectContent>
               {profiles.map((p) => (
@@ -109,21 +109,21 @@ export function NoiseProfileCard() {
         </div>
         <p className="text-muted-foreground text-xs">{current.limits}</p>
         <div className="flex items-center justify-between gap-4">
-          <span className="font-medium text-sm">Hosts, current minute</span>
+          <span className="font-medium text-sm">当前分钟的主机统计</span>
           <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>
             <RefreshCwIcon data-icon="inline-start" className={loading ? "animate-spin" : undefined} />
-            Refresh
+            刷新
           </Button>
         </div>
         {status?.hosts.length ? (
-          <Table aria-label="Noise counters per host">
+          <Table aria-label="各主机噪声计数">
             <TableHeader>
               <TableRow>
-                <TableHead>Host</TableHead>
+                <TableHead>主机</TableHead>
                 <TableHead className="text-right">RPM</TableHead>
-                <TableHead className="text-right">Peak RPM</TableHead>
-                <TableHead className="text-right">In flight (peak)</TableHead>
-                <TableHead className="text-right">Duplicates</TableHead>
+                <TableHead className="text-right">峰值 RPM</TableHead>
+                <TableHead className="text-right">并发（峰值）</TableHead>
+                <TableHead className="text-right">已避免的重复请求</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -144,7 +144,7 @@ export function NoiseProfileCard() {
           </Table>
         ) : (
           <p className="text-muted-foreground text-sm">
-            {status?.profile === "off" ? "Off counts no request." : "No paced request yet."}
+            {status?.profile === "off" ? "关闭时不统计请求。" : "暂无受控请求。"}
           </p>
         )}
       </CardContent>
