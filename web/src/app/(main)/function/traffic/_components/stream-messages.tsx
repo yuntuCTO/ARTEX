@@ -157,7 +157,7 @@ export function StreamMessagesPanel({ exchangeId, kind }: { exchangeId: string; 
         </span>
         <Button variant="outline" size="xs" className="ml-auto" disabled={loading} onClick={() => load(0)}>
           <RefreshCwIcon className={loading ? "animate-spin" : undefined} />
-          Refresh
+          刷新
         </Button>
       </div>
       {renderBody()}

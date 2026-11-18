@@ -284,7 +284,7 @@ export default function LLMRecordsPage() {
           />
         </div>
         <Input
-          placeholder="Model"
+          placeholder="模型"
           className="h-8 w-48"
           value={model}
           onChange={(e) => setModel(e.target.value)}
@@ -387,14 +387,14 @@ export default function LLMRecordsPage() {
             <Table>
               <TableHeader className="sticky top-0 z-10 bg-card">
                 <TableRow>
-                  <TableHead className="w-[130px]">Time</TableHead>
-                  <TableHead className="w-[60px]">Task</TableHead>
-                  <TableHead className="w-[90px]">Worker</TableHead>
+                  <TableHead className="w-[130px]">时间</TableHead>
+                  <TableHead className="w-[60px]">任务</TableHead>
+                  <TableHead className="w-[90px]">执行器</TableHead>
                   <TableHead className="w-[100px]">Profile</TableHead>
-                  <TableHead className="w-[140px]">Model</TableHead>
+                  <TableHead className="w-[140px]">模型</TableHead>
                   <TableHead className="w-[70px]">Latency</TableHead>
                   <TableHead className="w-[90px]">Tokens</TableHead>
-                  <TableHead className="w-[60px]">Status</TableHead>
+                  <TableHead className="w-[60px]">状态</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -451,9 +451,9 @@ export default function LLMRecordsPage() {
                       </TableCell>
                       <TableCell>
                         {rec.status === "ok" ? (
-                          <Badge variant="secondary" className="text-xs text-emerald-600">OK</Badge>
+                          <Badge variant="secondary" className="text-xs text-emerald-600">确定</Badge>
                         ) : (
-                          <Badge variant="destructive" className="text-xs">Error</Badge>
+                          <Badge variant="destructive" className="text-xs">错误</Badge>
                         )}
                       </TableCell>
                     </TableRow>
@@ -490,9 +490,9 @@ export default function LLMRecordsPage() {
                 {fmtLatency(selected.latency_ms)}
               </span>
               {selected.status === "ok" ? (
-                <Badge variant="secondary" className="text-xs text-emerald-600">OK</Badge>
+                <Badge variant="secondary" className="text-xs text-emerald-600">确定</Badge>
               ) : (
-                <Badge variant="destructive" className="text-xs">Error</Badge>
+                <Badge variant="destructive" className="text-xs">错误</Badge>
               )}
               {/* Raw view toggle. Old records have no raw data; disable it rather than silently
                   falling back, to avoid looking like "raw matches parsed". */}
@@ -526,7 +526,7 @@ export default function LLMRecordsPage() {
                   {detailLoading ? (
                     <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
                       <Loader2Icon className="size-3.5 animate-spin" />
-                      Loading…
+                      加载中…
                     </div>
                   ) : (
                     <pre className="p-3 font-mono text-xs break-all whitespace-pre-wrap">
@@ -544,7 +544,7 @@ export default function LLMRecordsPage() {
                   {detailLoading ? (
                     <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
                       <Loader2Icon className="size-3.5 animate-spin" />
-                      Loading…
+                      加载中…
                     </div>
                   ) : (
                     <pre className={cn(
@@ -570,7 +570,7 @@ export default function LLMRecordsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();

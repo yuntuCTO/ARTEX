@@ -36,7 +36,7 @@ interface TaskLLMProfileChainProps {
 }
 
 function ProfileRoleBadge({ index, currentIndex }: { index: number; currentIndex: number }) {
-  if (index === currentIndex) return <Badge variant="default">Current</Badge>;
+  if (index === currentIndex) return <Badge variant="default">当前</Badge>;
   if (index < currentIndex) {
     return (
       <Badge variant="outline" title="Profiles before the current cursor are not picked by automatic failover">

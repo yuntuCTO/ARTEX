@@ -316,7 +316,7 @@ export default function AssetsPage() {
     <div className="flex h-[calc(100vh-6rem)] min-h-0 flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Assets</h1>
+          <h1 className="text-xl font-semibold tracking-tight">资产</h1>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground">
@@ -328,7 +328,7 @@ export default function AssetsPage() {
             </Button>
           )}
           <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>
-            <RefreshCwIcon className={cn("size-4", loading && "animate-spin")} /> Refresh
+            <RefreshCwIcon className={cn("size-4", loading && "animate-spin")} /> 刷新
           </Button>
           <CompanyDialog onSaved={refresh} />
         </div>
@@ -354,10 +354,10 @@ export default function AssetsPage() {
               <Table>
                 <TableHeader className="sticky top-0 z-10 bg-card">
                   <TableRow>
-                    <TableHead>Company</TableHead>
-                    <TableHead className="w-24 text-right">Assets</TableHead>
+                    <TableHead>公司</TableHead>
+                    <TableHead className="w-24 text-right">资产</TableHead>
                     <TableHead>Asset scope</TableHead>
-                    <TableHead className="w-36 text-right">Actions</TableHead>
+                    <TableHead className="w-36 text-right">操作</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -744,7 +744,7 @@ export default function AssetsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -792,7 +792,7 @@ export default function AssetsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={companyDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={companyDeleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
@@ -1040,7 +1040,7 @@ function CompanyDialog({ onSaved }: { onSaved: () => void }) {
         </div>
         <SheetFooter className="flex-row justify-end gap-2 border-t p-4">
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
-            Cancel
+            取消
           </Button>
           <Button onClick={submit} disabled={busy || !name.trim() || parsedScope.errors.length > 0}>
             {busy ? "Saving…" : "Save"}
@@ -1094,7 +1094,7 @@ function EditScopeDialog({ company, onSaved }: { company: Company; onSaved: () =
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="h-7">
-          Edit
+          编辑
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -1123,7 +1123,7 @@ function EditScopeDialog({ company, onSaved }: { company: Company; onSaved: () =
         </FieldGroup>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
-            Cancel
+            取消
           </Button>
           <Button onClick={submit} disabled={busy || parsedScope.errors.length > 0}>
             {busy ? "Saving…" : "Overwrite save"}
@@ -1204,7 +1204,7 @@ function AppendScopeDialog({ company, onSaved }: { company: Company; onSaved: ()
         </FieldGroup>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
-            Cancel
+            取消
           </Button>
           <Button onClick={submit} disabled={busy || parsedScope.rules.length === 0 || parsedScope.errors.length > 0}>
             {busy ? "Saving…" : "Append"}

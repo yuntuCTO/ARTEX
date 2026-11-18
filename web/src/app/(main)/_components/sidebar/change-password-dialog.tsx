@@ -106,7 +106,7 @@ export function ChangePasswordDialog({
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
+              取消
             </Button>
             <Button type="submit" disabled={saving}>
               {saving ? "Changing…" : "Confirm change"}

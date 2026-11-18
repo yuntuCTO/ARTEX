@@ -81,10 +81,10 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
           }}
         >
           <SelectTrigger size="sm" className="w-32">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder="全部状态" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="all">全部状态</SelectItem>
             {["pending", "sending", "sent", "failed", "skipped"].map((s) => (
               <SelectItem key={s} value={s}>
                 {statusMeta("delivery", s).label}
@@ -93,7 +93,7 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
           </SelectContent>
         </Select>
         <Button size="sm" variant="outline" onClick={load} disabled={loading}>
-          <RefreshCwIcon className={loading ? "animate-spin" : ""} /> Refresh
+          <RefreshCwIcon className={loading ? "animate-spin" : ""} /> 刷新
         </Button>
         <span className="text-muted-foreground ml-auto text-xs">{total} in total</span>
       </div>
@@ -102,12 +102,12 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-40">Time</TableHead>
-              <TableHead>Vulnerability</TableHead>
+              <TableHead className="w-40">时间</TableHead>
+              <TableHead>漏洞</TableHead>
               <TableHead className="w-40">Channel</TableHead>
-              <TableHead className="w-24">Status</TableHead>
+              <TableHead className="w-24">状态</TableHead>
               <TableHead className="w-16">Attempts</TableHead>
-              <TableHead>Error</TableHead>
+              <TableHead>错误</TableHead>
               <TableHead className="w-20" />
             </TableRow>
           </TableHeader>
@@ -149,7 +149,7 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
                     {/* Only failed/skipped items get a retry button: re-sending a delivered one would duplicate the push. */}
                     {(d.state === "failed" || d.state === "skipped") && (
                       <Button size="sm" variant="outline" onClick={() => retry(d.id)}>
-                        <RotateCcwIcon /> Retry
+                        <RotateCcwIcon /> 重试
                       </Button>
                     )}
                   </TableCell>
@@ -163,13 +163,13 @@ export function DeliveryList({ channels }: { channels: NotificationChannel[] }) 
       {maxPage > 1 && (
         <div className="flex items-center justify-end gap-2">
           <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
+            上一页
           </Button>
           <span className="text-muted-foreground text-sm">
             {page} / {maxPage}
           </span>
           <Button size="sm" variant="outline" disabled={page >= maxPage} onClick={() => setPage((p) => p + 1)}>
-            Next
+            下一步
           </Button>
         </div>
       )}

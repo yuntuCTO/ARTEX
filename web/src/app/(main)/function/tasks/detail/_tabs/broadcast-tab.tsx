@@ -608,7 +608,7 @@ export function BroadcastTab({ taskId }: { taskId: string }) {
                 setPage(1);
               }}
             >
-              Clear
+              清除
             </Button>
           )}
         </div>

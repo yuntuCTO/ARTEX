@@ -226,7 +226,7 @@ function ToolEditor({
           <div className="flex items-center gap-2">
             <Switch checked={enabled} onCheckedChange={setEnabled} id={`en-${tool.key}`} />
             <Label htmlFor={`en-${tool.key}`} className="text-sm">
-              Enable
+              启用
             </Label>
           </div>
         </div>
@@ -264,7 +264,7 @@ function ToolEditor({
                 </Badge>
                 {r.required && (
                   <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-                    Required
+                    必填
                   </Badge>
                 )}
                 {r.parentKey && (
@@ -273,7 +273,7 @@ function ToolEditor({
               </div>
               <div className="grid gap-2">
                 <div className="grid gap-1">
-                  <Label className="text-muted-foreground text-[11px]">Description</Label>
+                  <Label className="text-muted-foreground text-[11px]">描述</Label>
                   <Input
                     className="text-xs"
                     value={r.description}
@@ -281,7 +281,7 @@ function ToolEditor({
                   />
                 </div>
                 <div className="grid gap-1">
-                  <Label className="text-muted-foreground text-[11px]">Default</Label>
+                  <Label className="text-muted-foreground text-[11px]">默认</Label>
                   <Input
                     className="text-xs"
                     placeholder={r.scalar ? "(empty = no default)" : "scalars only"}
@@ -299,7 +299,7 @@ function ToolEditor({
       <Separator className="mt-4" />
       <div className="flex flex-wrap gap-2 p-4">
         <Button size="sm" onClick={save} disabled={saving}>
-          <SaveIcon /> Save
+          <SaveIcon /> 保存
         </Button>
         <Button size="sm" variant="outline" onClick={reset}>
           <RotateCcwIcon /> Restore defaults
@@ -335,7 +335,7 @@ function ToolGridCard({ tool, onClick }: { tool: Tool; onClick: () => void }) {
         )}
         {!tool.enabled && (
           <Badge variant="outline" className="text-destructive px-1.5 py-0 text-[10px]">
-            Disabled
+            已禁用
           </Badge>
         )}
         <Badge
@@ -402,7 +402,7 @@ export default function ToolsPage() {
     <div className="flex flex-1 flex-col gap-4 md:gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Tools</h1>
+          <h1 className="text-xl font-semibold tracking-tight">工具</h1>
           <p className="text-muted-foreground text-sm">Descriptions/bindings for system tools, plus custom tools (command/script/http)</p>
         </div>
         <div className="relative w-64">
@@ -695,7 +695,7 @@ function CustomToolDialog({
           </div>
 
           <div className="grid gap-1.5">
-            <Label className="text-xs">Type</Label>
+            <Label className="text-xs">类型</Label>
             <Select value={kind} onValueChange={(v) => setKind(v as "shell" | "command" | "script" | "http")}>
               <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -729,7 +729,7 @@ function CustomToolDialog({
             <div className="grid gap-2">
               <div className="flex gap-2">
                 <div className="grid gap-1.5">
-                  <Label className="text-xs">Method</Label>
+                  <Label className="text-xs">方法</Label>
                   <Input className="w-24" value={ex.method} onChange={(e) => setEx({ ...ex, method: e.target.value })} />
                 </div>
                 <div className="grid flex-1 gap-1.5">
@@ -793,7 +793,7 @@ function CustomToolDialog({
 
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 text-sm">
-              <Switch checked={enabled} onCheckedChange={setEnabled} /> Enable
+              <Switch checked={enabled} onCheckedChange={setEnabled} /> 启用
             </label>
             {kind !== "shell" && (
               <label className="flex items-center gap-2 text-sm">
@@ -834,7 +834,7 @@ function CustomToolDialog({
           </Button>
           {!isNew && (
             <Button size="sm" variant="outline" className="text-destructive" onClick={del}>
-              <Trash2Icon /> Delete
+              <Trash2Icon /> 删除
             </Button>
           )}
         </div>

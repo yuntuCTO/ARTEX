@@ -74,12 +74,12 @@ function AgentGridCard({
             </Badge>
           ) : (
             <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-              Custom
+              自定义
             </Badge>
           )}
           {!agent.enabled && (
             <Badge variant="outline" className="text-destructive px-1.5 py-0 text-[10px]">
-              Disabled
+              已禁用
             </Badge>
           )}
         </div>
@@ -111,8 +111,8 @@ function AgentGridCard({
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={del}>Delete</AlertDialogAction>
+              <AlertDialogCancel>取消</AlertDialogCancel>
+              <AlertDialogAction onClick={del}>删除</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -177,7 +177,7 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
             )}
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="agent-name">Name</Label>
+            <Label htmlFor="agent-name">名称</Label>
             <Input
               id="agent-name"
               placeholder="e.g. Research assistant"
@@ -186,7 +186,7 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
             />
           </div>
           <div className="grid gap-1.5">
-            <Label htmlFor="agent-desc">Description</Label>
+            <Label htmlFor="agent-desc">描述</Label>
             <Textarea
               id="agent-desc"
               placeholder="One line on what this agent does"
@@ -198,7 +198,7 @@ function CreateAgentDialog({ onCreated }: { onCreated: (key: string) => void }) 
         </div>
         <DialogFooter>
           <Button onClick={create} disabled={!canCreate}>
-            Create
+            创建
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -223,7 +223,7 @@ export default function AgentsPage() {
     <div className="flex flex-1 flex-col gap-4 md:gap-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Agent</h1>
+          <h1 className="text-xl font-semibold tracking-tight">智能体</h1>
           <p className="text-muted-foreground text-sm">
             Prompts/configs for built-in agents, plus creating and managing custom conversational agents
           </p>
@@ -267,7 +267,7 @@ export default function AgentsPage() {
                   <span className="text-muted-foreground font-mono text-xs">{editing.key}</span>
                   {!editing.builtin && (
                     <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-                      Custom
+                      自定义
                     </Badge>
                   )}
                 </SheetTitle>

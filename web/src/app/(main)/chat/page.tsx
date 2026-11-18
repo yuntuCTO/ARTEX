@@ -203,7 +203,7 @@ function Composer({
                   type="button"
                   className="ml-0.5 text-muted-foreground hover:text-foreground"
                   onClick={() => onRemoveAttachment(a.path)}
-                  title="Remove"
+                  title="移除"
                 >
                   <XIcon className="size-3" />
                 </button>
@@ -432,7 +432,7 @@ function DraftChat({
                 {a.name}
                 {!a.builtin && (
                   <Badge variant="outline" className="px-1 py-0 text-[9px]">
-                    Custom
+                    自定义
                   </Badge>
                 )}
               </span>
@@ -768,7 +768,7 @@ function ChatView({
         <span className="text-muted-foreground hidden shrink-0 font-mono text-xs sm:inline">{conv.agent_key}</span>
         {agent && !agent.builtin && (
           <Badge variant="outline" className="shrink-0 px-1.5 py-0 text-[10px]">
-            Custom
+            自定义
           </Badge>
         )}
         {agent?.description && (
@@ -933,7 +933,7 @@ const ConversationItem = React.memo(function ConversationItem({
             {conv.running ? (
               <Badge variant="secondary" className="shrink-0 gap-1" title="Agent is running">
                 <Spinner className="size-3" aria-hidden="true" />
-                Running
+                运行中
               </Badge>
             ) : null}
           </div>
@@ -983,7 +983,7 @@ const ConversationItem = React.memo(function ConversationItem({
           <DropdownMenuGroup>
             <DropdownMenuItem variant="destructive" onSelect={() => setDeleteOpen(true)}>
               <Trash2Icon />
-              Delete
+              删除
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -995,8 +995,8 @@ const ConversationItem = React.memo(function ConversationItem({
             <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => onDelete(conv.id)}>Delete</AlertDialogAction>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction onClick={() => onDelete(conv.id)}>删除</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -1397,11 +1397,11 @@ export default function ChatPage() {
                       onClick={() => setBulkDeleteOpen(true)}
                     >
                       <Trash2Icon data-icon="inline-start" />
-                      Delete
+                      删除
                     </Button>
                   )}
                   <Button size="sm" variant="ghost" onClick={exitSelectionMode}>
-                    Done
+                    完成
                   </Button>
                 </div>
               ) : (
@@ -1549,7 +1549,7 @@ export default function ChatPage() {
             <AlertDialogDescription>Conversation messages and execution records will be deleted with them. This action cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={bulkDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={bulkDeleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               disabled={bulkDeleting || selectedConversationCount === 0}

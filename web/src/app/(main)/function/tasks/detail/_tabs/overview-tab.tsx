@@ -444,11 +444,11 @@ export function OverviewTab({ taskId }: { taskId: string }) {
         </CardHeader>
         <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <div className="text-xs font-medium text-muted-foreground">Description</div>
+            <div className="text-xs font-medium text-muted-foreground">描述</div>
             <p className="text-sm whitespace-pre-wrap break-words">{task?.description?.trim() || "—"}</p>
           </div>
           <div className="flex flex-col gap-1.5">
-            <div className="text-xs font-medium text-muted-foreground">Goal</div>
+            <div className="text-xs font-medium text-muted-foreground">目标</div>
             <p className="text-sm whitespace-pre-wrap break-words">{task?.goal?.trim() || "—"}</p>
           </div>
         </CardContent>
@@ -488,7 +488,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={goalBusy}
             />
             <Button size="sm" variant="outline" disabled={goalBusy || !goalText.trim()} onClick={() => void addGoal()}>
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {goalErr && <span className="text-xs text-red-500">{goalErr}</span>}
           </div>
@@ -595,8 +595,8 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               value={conKind}
               onChange={(e) => setConKind(e.target.value as TaskConstraint["kind"])}
             >
-              <NativeSelectOption value="deny">Deny</NativeSelectOption>
-              <NativeSelectOption value="allow">Allow</NativeSelectOption>
+              <NativeSelectOption value="deny">拒绝</NativeSelectOption>
+              <NativeSelectOption value="allow">允许</NativeSelectOption>
             </NativeSelect>
             <Input
               className="h-7 min-w-56 flex-1 text-sm"
@@ -614,7 +614,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={conBusy || !conText.trim()}
               onClick={() => void addConstraint()}
             >
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {conErr && <span className="text-xs text-red-500">{conErr}</span>}
           </div>
@@ -629,8 +629,8 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                       value={editConKind}
                       onChange={(e) => setEditConKind(e.target.value as TaskConstraint["kind"])}
                     >
-                      <NativeSelectOption value="deny">Deny</NativeSelectOption>
-                      <NativeSelectOption value="allow">Allow</NativeSelectOption>
+                      <NativeSelectOption value="deny">拒绝</NativeSelectOption>
+                      <NativeSelectOption value="allow">允许</NativeSelectOption>
                     </NativeSelect>
                     <Input
                       className="h-7 min-w-56 flex-1 text-sm"
@@ -769,11 +769,11 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               {/* Totals overview */}
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm">
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Input </span>
+                  <span className="text-muted-foreground">输入 </span>
                   <span className="font-semibold">{fmtTokens(tokenTotals.input)}</span>
                 </span>
                 <span className="tabular-nums">
-                  <span className="text-muted-foreground">Output </span>
+                  <span className="text-muted-foreground">输出 </span>
                   <span className="font-semibold">{fmtTokens(tokenTotals.output)}</span>
                 </span>
                 <span className="tabular-nums">
@@ -792,10 +792,10 @@ export function OverviewTab({ taskId }: { taskId: string }) {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-muted-foreground border-b text-left text-xs">
-                      <th className="py-1.5 pr-3 font-medium">Model</th>
+                      <th className="py-1.5 pr-3 font-medium">模型</th>
                       <th className="py-1.5 pr-3 text-right font-medium">Calls</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Input</th>
-                      <th className="py-1.5 pr-3 text-right font-medium">Output</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">输入</th>
+                      <th className="py-1.5 pr-3 text-right font-medium">输出</th>
                       <th className="py-1.5 pr-3 text-right font-medium">Cache read</th>
                       <th className="py-1.5 text-right font-medium">Hit rate</th>
                     </tr>
@@ -847,8 +847,8 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               <NativeSelectOption value="ip">IP</NativeSelectOption>
               <NativeSelectOption value="cidr">CIDR</NativeSelectOption>
               <NativeSelectOption value="icp">ICP</NativeSelectOption>
-              <NativeSelectOption value="keyword">Keyword</NativeSelectOption>
-              <NativeSelectOption value="company">Company</NativeSelectOption>
+              <NativeSelectOption value="keyword">关键字</NativeSelectOption>
+              <NativeSelectOption value="company">公司</NativeSelectOption>
             </NativeSelect>
             <Input
               className="h-7 w-56 text-sm"
@@ -876,7 +876,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
               disabled={scopeBusy || !scopeValueInput.trim()}
               onClick={() => void addScope()}
             >
-              <PlusIcon className="size-3.5" /> Add
+              <PlusIcon className="size-3.5" /> 添加
             </Button>
             {scopeErr && <span className="text-xs text-red-500">{scopeErr}</span>}
           </div>
@@ -988,7 +988,7 @@ export function OverviewTab({ taskId }: { taskId: string }) {
             </div>
             <div>
               <div className="text-2xl font-semibold tabular-nums text-blue-600">{running.length}</div>
-              <div className="text-xs text-muted-foreground">Running</div>
+              <div className="text-xs text-muted-foreground">运行中</div>
             </div>
             <div>
               <div className="text-2xl font-semibold tabular-nums">{open.length}</div>
@@ -1197,8 +1197,8 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
         {/* Add form */}
         <div className="flex flex-wrap items-center gap-2">
           <NativeSelect size="sm" value={newAction} onChange={(e) => setNewAction(e.target.value as "block" | "allow")}>
-            <NativeSelectOption value="block">Block</NativeSelectOption>
-            <NativeSelectOption value="allow">Allow</NativeSelectOption>
+            <NativeSelectOption value="block">阻止</NativeSelectOption>
+            <NativeSelectOption value="allow">允许</NativeSelectOption>
           </NativeSelect>
           <NativeSelect size="sm" value={newKind} onChange={(e) => setNewKind(e.target.value as AssetInterceptKind)}>
             {TASK_RULE_KIND_OPTIONS.map((o) => (
@@ -1225,7 +1225,7 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
             disabled={busy}
           />
           <Button size="sm" variant="outline" disabled={busy || !newPattern.trim()} onClick={() => void add()}>
-            <PlusIcon className="size-3.5" /> Add
+            <PlusIcon className="size-3.5" /> 添加
           </Button>
           {err && <span className="text-xs text-red-500">{err}</span>}
         </div>
@@ -1240,8 +1240,8 @@ function TaskInterceptRulesCard({ taskId }: { taskId: string }) {
                     value={editAction}
                     onChange={(e) => setEditAction(e.target.value as "block" | "allow")}
                   >
-                    <NativeSelectOption value="block">Block</NativeSelectOption>
-                    <NativeSelectOption value="allow">Allow</NativeSelectOption>
+                    <NativeSelectOption value="block">阻止</NativeSelectOption>
+                    <NativeSelectOption value="allow">允许</NativeSelectOption>
                   </NativeSelect>
                   <NativeSelect
                     size="sm"

@@ -352,7 +352,7 @@ export default function TrafficPage() {
     <div className="flex min-h-0 flex-1 flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Traffic</h1>
+          <h1 className="text-xl font-semibold tracking-tight">流量</h1>
           <p className="text-muted-foreground text-sm">Global recording proxy · all HTTP traffic</p>
         </div>
         <div className="flex items-center gap-4 text-sm">
@@ -501,10 +501,10 @@ export default function TrafficPage() {
         </div>
         <Select value={method} onValueChange={setMethod}>
           <SelectTrigger size="sm" className="w-32">
-            <SelectValue placeholder="Method" />
+            <SelectValue placeholder="方法" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All methods</SelectItem>
+            <SelectItem value="all">全部方法</SelectItem>
             {METHODS.map((m) => (
               <SelectItem key={m} value={m}>
                 {m}
@@ -574,10 +574,10 @@ export default function TrafficPage() {
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger size="sm" className="w-28">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder="状态" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
+            <SelectItem value="all">全部状态</SelectItem>
             {STATUS_BUCKETS.map((s) => (
               <SelectItem key={s} value={s}>
                 {s}
@@ -649,18 +649,18 @@ export default function TrafficPage() {
                   </TableHead>
                   <SortableHead
                     field="ts"
-                    label="Time"
+                    label="时间"
                     activeField={sort.field}
                     direction={sort.direction}
                     onSort={toggleSort}
                     className="w-36"
                   />
                   <TableHead className="w-44">host</TableHead>
-                  <TableHead className="w-20">Method</TableHead>
+                  <TableHead className="w-20">方法</TableHead>
                   <TableHead>URL</TableHead>
                   <SortableHead
                     field="status"
-                    label="Status"
+                    label="状态"
                     activeField={sort.field}
                     direction={sort.direction}
                     onSort={toggleSort}
@@ -754,8 +754,8 @@ export default function TrafficPage() {
               </SheetHeader>
               <Tabs value={detailTab} onValueChange={setDetailTab} className="min-h-0 flex-1 gap-0">
                 <TabsList className={cn("mx-5 mt-4 grid w-auto", hasStream ? "grid-cols-4" : "grid-cols-3")}>
-                  <TabsTrigger value="request">Request</TabsTrigger>
-                  <TabsTrigger value="response">Response</TabsTrigger>
+                  <TabsTrigger value="request">请求</TabsTrigger>
+                  <TabsTrigger value="response">响应</TabsTrigger>
                   {hasStream && (
                     <TabsTrigger value="stream">
                       Stream
@@ -805,7 +805,7 @@ export default function TrafficPage() {
                     {detailLoading || !detail ? (
                       <div className="flex items-center gap-2 p-5 text-muted-foreground text-xs">
                         <Loader2Icon className="size-3.5 animate-spin" />
-                        Loading…
+                        加载中…
                       </div>
                     ) : (
                       <ReplayPanel
@@ -862,7 +862,7 @@ export default function TrafficPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();

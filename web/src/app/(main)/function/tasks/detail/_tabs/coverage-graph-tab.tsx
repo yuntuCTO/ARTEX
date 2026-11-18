@@ -346,7 +346,7 @@ function AssetSheet({
               <div className="flex w-full min-w-0 flex-col gap-4 p-4">
                 <section>
                   <h4 className="text-muted-foreground mb-1 text-xs font-medium">Properties</h4>
-                  <DetailRow label="Type">{meta.label}</DetailRow>
+                  <DetailRow label="类型">{meta.label}</DetailRow>
                   <DetailRow label="Test status">
                     {node.in_scope ? (
                       node.tested ? (
@@ -358,7 +358,7 @@ function AssetSheet({
                       <span className="text-neutral-400">Out of scope (connecting node)</span>
                     )}
                   </DetailRow>
-                  <DetailRow label="Domain">{node.domain}</DetailRow>
+                  <DetailRow label="域名">{node.domain}</DetailRow>
                   <DetailRow label="Root domain">{node.root_domain}</DetailRow>
                   <DetailRow label="IP">{node.ip}</DetailRow>
                   <DetailRow label="Port">{node.port ? node.port : undefined}</DetailRow>
@@ -656,7 +656,7 @@ function GraphInner({ taskId, coverageEnabled = true }: { taskId: string; covera
           ) : (
             <span className="text-muted-foreground">{loading ? "Loading…" : "No in-scope assets yet (anchor the task scope first)"}</span>
           )}
-          <Button variant="ghost" size="icon" className="size-6" onClick={fetchGraph} title="Refresh">
+          <Button variant="ghost" size="icon" className="size-6" onClick={fetchGraph} title="刷新">
             <RefreshCw className={cn("size-3.5", loading && "animate-spin")} />
           </Button>
         </div>

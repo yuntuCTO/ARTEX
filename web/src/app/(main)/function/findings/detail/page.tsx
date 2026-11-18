@@ -177,7 +177,7 @@ function FindingDetailInner() {
           )}
         </div>
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="overview">概览</TabsTrigger>
           <TabsTrigger value="lineage">Exploration graph</TabsTrigger>
         </TabsList>
       </header>
@@ -263,7 +263,7 @@ function FindingDetailInner() {
             {/* Right column: status panel */}
             <Card className="h-fit lg:sticky lg:top-24">
               <CardHeader>
-                <CardTitle className="text-sm">Status</CardTitle>
+                <CardTitle className="text-sm">状态</CardTitle>
               </CardHeader>
               <CardContent className="divide-y">
                 {/* Vulnerability ID */}
@@ -274,7 +274,7 @@ function FindingDetailInner() {
                 </FieldRow>
 
                 {/* Severity */}
-                <FieldRow label="Severity">
+                <FieldRow label="严重性">
                   {finding.inherited ? (
                     <StatusBadge domain="severity" value={finding.severity} dot />
                   ) : (
@@ -363,7 +363,7 @@ function FindingDetailInner() {
                 </FieldRow>
 
                 {/* Assets */}
-                <FieldRow label="Assets">
+                <FieldRow label="资产">
                   {finding.assets && finding.assets.length > 0 ? (
                     <div className="flex flex-wrap justify-end gap-1">
                       {finding.assets.map((a) => (
@@ -382,7 +382,7 @@ function FindingDetailInner() {
                 </FieldRow>
 
                 {/* Task */}
-                <FieldRow label="Task">
+                <FieldRow label="任务">
                   {finding.task_id ? (
                     <Link
                       href={`/function/tasks/detail?id=${finding.task_id}`}

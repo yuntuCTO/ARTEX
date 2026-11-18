@@ -117,7 +117,7 @@ export function FindingTrafficPanel({
               <AlertDescription>
                 {error}
                 <Button variant="link" onClick={() => setReload((n) => n + 1)}>
-                  Retry
+                  重试
                 </Button>
               </AlertDescription>
             </Alert>
@@ -264,7 +264,7 @@ export function FindingTrafficPanel({
           </FieldGroup>
           <DialogFooter>
             <Button variant="outline" disabled={busy} onClick={() => setEditing(null)}>
-              Cancel
+              取消
             </Button>
             <Button
               disabled={busy || !editing || !data}

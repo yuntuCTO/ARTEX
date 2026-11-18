@@ -402,7 +402,7 @@ function SessionItem({
         </span>
         {deleted && (
           <Badge variant="outline" className="shrink-0 border-destructive/40 text-destructive">
-            Deleted
+            已删除
           </Badge>
         )}
         {hasPending && <ShieldAlertIcon className="size-3.5 shrink-0 text-amber-500" />}
@@ -1894,7 +1894,7 @@ export function SessionsTab({ taskId, taskPaused = false }: { taskId: string; ta
                       className="h-6 px-2 text-xs"
                       onClick={() => loadSession(activeKey)}
                     >
-                      Retry
+                      重试
                     </Button>
                   </div>
                 ) : activity.length ? (
@@ -1929,7 +1929,7 @@ export function SessionsTab({ taskId, taskPaused = false }: { taskId: string; ta
                           type="button"
                           className="ml-0.5 text-muted-foreground hover:text-foreground"
                           onClick={() => setAttachments((p) => p.filter((x) => x.path !== a.path))}
-                          title="Remove"
+                          title="移除"
                         >
                           <XIcon className="size-3" />
                         </button>
@@ -2174,7 +2174,7 @@ export function SessionsTab({ taskId, taskPaused = false }: { taskId: string; ta
               </div>
             </div>
             <AlertDialogFooter>
-              <AlertDialogCancel>Back</AlertDialogCancel>
+              <AlertDialogCancel>返回</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
                 disabled={!cancelIntent || controllingIntent !== null || !cancelReason.trim()}
@@ -2196,7 +2196,7 @@ export function SessionsTab({ taskId, taskPaused = false }: { taskId: string; ta
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={creatingMain}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={creatingMain}>取消</AlertDialogCancel>
               <AlertDialogAction disabled={creatingMain} onClick={() => void createMainSession()}>
                 {creatingMain ? "Starting…" : "Start new session"}
               </AlertDialogAction>

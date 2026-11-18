@@ -704,7 +704,7 @@ export default function SkillsPage() {
     <div data-content-padding="false" className="flex flex-1 flex-col overflow-hidden">
       <div className="flex items-center gap-3 border-b px-4 py-2.5 lg:px-6">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-sm font-semibold leading-tight">Skill</h1>
+          <h1 className="text-sm font-semibold leading-tight">技能</h1>
           <p className="text-muted-foreground text-xs">Skill library · agentskills.io spec · visibility granted per agent</p>
         </div>
         {/* Gap list: skills agents invoke by name but missing from the library — direct evidence of what to add. */}
@@ -970,7 +970,7 @@ export default function SkillsPage() {
                 </Button>
               </div>
               {fileLoading ? (
-                <p className="text-xs text-muted-foreground">Loading…</p>
+                <p className="text-xs text-muted-foreground">加载中…</p>
               ) : (
                 <Textarea
                   className="flex-1 resize-none font-mono text-xs"
@@ -1001,7 +1001,7 @@ export default function SkillsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               disabled={deleting}
               onClick={(e) => { e.preventDefault(); void runPendingDelete(); }}
@@ -1042,12 +1042,12 @@ export default function SkillsPage() {
             {/* basics */}
             <TabsContent value="basic" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4 pt-4 data-[state=inactive]:hidden">
               <div className="grid gap-1.5">
-                <Label htmlFor="sk-name">Name <span className="text-destructive">*</span></Label>
+                <Label htmlFor="sk-name">名称 <span className="text-destructive">*</span></Label>
                 <Input id="sk-name" placeholder="sqli-deepdive" value={newName} onChange={(e) => setNewName(e.target.value)} />
                 <p className="text-muted-foreground text-xs">Lowercase letters / digits / hyphens, 1–64 characters</p>
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="sk-desc">Description <span className="text-destructive">*</span></Label>
+                <Label htmlFor="sk-desc">描述 <span className="text-destructive">*</span></Label>
                 <Textarea id="sk-desc" rows={2} className="resize-none"
                   placeholder="What this skill does and when to use it."
                   value={newDesc} onChange={(e) => setNewDesc(e.target.value)} />
@@ -1063,7 +1063,7 @@ export default function SkillsPage() {
                 </div>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-1.5">
-                <Label htmlFor="sk-inst">Body <span className="text-muted-foreground text-xs font-normal">(skeleton generated automatically when empty)</span></Label>
+                <Label htmlFor="sk-inst">正文 <span className="text-muted-foreground text-xs font-normal">(skeleton generated automatically when empty)</span></Label>
                 <Textarea id="sk-inst"
                   className="min-h-40 flex-1 resize-none font-mono text-sm leading-relaxed"
                   placeholder={"## How to run\n\n1. Probe for errors first\n2. Distinguish blind injection types\n\nScripts go in the scripts/ directory."}
@@ -1117,7 +1117,7 @@ export default function SkillsPage() {
           </Tabs>
 
           <SheetFooter className="flex-row justify-end gap-2 border-t px-4 py-3">
-            <Button variant="outline" onClick={() => setNewOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setNewOpen(false)}>取消</Button>
             <Button onClick={createNewSkill} disabled={creatingSkill}>{creatingSkill ? "Creating…" : "Create"}</Button>
           </SheetFooter>
         </SheetContent>

@@ -175,7 +175,7 @@ export default function LogsPage() {
             {paused ? "Paused" : "Pause"}
           </Button>
           <Button size="sm" variant="outline" className="h-8" onClick={() => setLines([])}>
-            Clear
+            清除
           </Button>
           <span className="ml-auto text-xs text-muted-foreground">
             {counts.total} lines ·{" "}

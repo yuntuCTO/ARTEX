@@ -108,7 +108,7 @@ export function FindingRetestPanel({
             <AlertDescription>
               Failed to load retest records: {error}
               <Button variant="outline" size="sm" onClick={() => void load()}>
-                Retry
+                重试
               </Button>
             </AlertDescription>
           </Alert>

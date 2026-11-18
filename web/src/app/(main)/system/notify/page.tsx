@@ -301,7 +301,7 @@ export default function NotifyPage() {
     <div className="flex flex-1 flex-col gap-4 md:gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight">Notifications</h1>
+          <h1 className="text-xl font-semibold tracking-tight">通知</h1>
           <p className="text-muted-foreground text-sm">
             Push findings to DingTalk / Feishu / WeCom and other channels · each channel has its own delivery timing and filter rules
           </p>
@@ -325,8 +325,8 @@ export default function NotifyPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <StatTile label="Channels" value={`${meta.stats.channels_on} / ${meta.stats.channels}`} hint="On / total" />
           <StatTile label="Sent today" value={String(meta.stats.sent_today)} />
-          <StatTile label="Pending" value={String(meta.stats.pending)} />
-          <StatTile label="Failed" value={String(meta.stats.failed)} tone={meta.stats.failed > 0 ? "red" : undefined} />
+          <StatTile label="待处理" value={String(meta.stats.pending)} />
+          <StatTile label="已失败" value={String(meta.stats.failed)} tone={meta.stats.failed > 0 ? "red" : undefined} />
           <StatTile
             label="Oldest backlog"
             value={formatBacklog(meta.stats.backlog_age_ms)}
@@ -443,12 +443,12 @@ export default function NotifyPage() {
                         checked={ch.enabled}
                         onCheckedChange={() => toggleEnabled(ch)}
                         onClick={(e) => e.stopPropagation()}
-                        aria-label="Enable"
+                        aria-label="启用"
                       />
                       <Button
                         size="icon"
                         variant="outline"
-                        aria-label="Delete"
+                        aria-label="删除"
                         onClick={(e) => {
                           e.stopPropagation();
                           // void explicitly discards the Promise: removeChannel catches and toasts on its own,
@@ -465,7 +465,7 @@ export default function NotifyPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="outline">{KIND_LABEL[ch.kind] ?? ch.kind}</Badge>
                     <Badge variant="outline">{ch.mode === "digest" ? "Digest" : "Realtime"}</Badge>
-                    {!ch.enabled && <Badge variant="outline">Disabled</Badge>}
+                    {!ch.enabled && <Badge variant="outline">已禁用</Badge>}
                   </div>
                   <FilterSummary filter={ch.filter} />
                 </CardContent>
@@ -650,7 +650,7 @@ export default function NotifyPage() {
               </div>
 
               <div className="flex items-center gap-2 text-sm">
-                <Switch checked={form.enabled} onCheckedChange={(v) => setF({ enabled: v })} aria-label="Enable" />
+                <Switch checked={form.enabled} onCheckedChange={(v) => setF({ enabled: v })} aria-label="启用" />
                 Enable this channel
               </div>
             </div>

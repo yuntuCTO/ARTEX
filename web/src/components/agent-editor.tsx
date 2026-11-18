@@ -273,8 +273,8 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
         <TabsTrigger value="prompt">Config & Prompt</TabsTrigger>
         <TabsTrigger value="wrapup">Wrap-up Prompt</TabsTrigger>
         <TabsTrigger value="mcp">MCP</TabsTrigger>
-        <TabsTrigger value="skill">Skill</TabsTrigger>
-        <TabsTrigger value="tools">Tools</TabsTrigger>
+        <TabsTrigger value="skill">技能</TabsTrigger>
+        <TabsTrigger value="tools">工具</TabsTrigger>
         {isCustom && <TabsTrigger value="triggers">Triggers</TabsTrigger>}
       </TabsList>
 
@@ -419,7 +419,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
               {versions.map((ver, i) => (
                 <li key={ver.version} className="flex items-center gap-2 rounded-md px-1 py-0.5 text-xs hover:bg-muted/50">
                   <span className="font-mono shrink-0">v{ver.version}</span>
-                  {i === 0 && <Badge variant="secondary" className="px-1.5 py-0 shrink-0">Current</Badge>}
+                  {i === 0 && <Badge variant="secondary" className="px-1.5 py-0 shrink-0">当前</Badge>}
                   <span className="text-muted-foreground truncate flex-1">{ver.note}</span>
                   {ver.ts && (
                     <span className="text-muted-foreground/60 shrink-0 tabular-nums">
@@ -449,7 +449,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
                 <DialogTitle>
                   v{viewVer?.version}
                   {viewVer?.version === versions[0]?.version && (
-                    <Badge variant="secondary" className="ml-2 px-1.5 py-0 align-middle">Current</Badge>
+                    <Badge variant="secondary" className="ml-2 px-1.5 py-0 align-middle">当前</Badge>
                   )}
                 </DialogTitle>
                 <DialogDescription>
@@ -509,7 +509,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
           <div className="flex items-center gap-2">
             <Label className="text-xs">Wrap-up prompt body</Label>
             {wrapup.trim() ? (
-              <Badge variant="secondary" className="px-1.5 py-0">Custom</Badge>
+              <Badge variant="secondary" className="px-1.5 py-0">自定义</Badge>
             ) : (
               <Badge variant="outline" className="px-1.5 py-0">Using built-in default</Badge>
             )}
@@ -529,7 +529,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
               value={wrapupTurns} onChange={(e) => setWrapupTurns(e.target.value)} />
           </div>
           <div className="flex gap-2">
-            <Button size="sm" onClick={saveWrapup}>Save</Button>
+            <Button size="sm" onClick={saveWrapup}>保存</Button>
             <Button size="sm" variant="outline" onClick={resetWrapup}>Restore default</Button>
           </div>
           {wrapupDefault && (
@@ -554,7 +554,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
               <div className="flex items-center gap-2">
                 <Label className="text-xs">Task timeout wrap-up prompt body</Label>
                 {ttWrapup.trim() ? (
-                  <Badge variant="secondary" className="px-1.5 py-0">Custom</Badge>
+                  <Badge variant="secondary" className="px-1.5 py-0">自定义</Badge>
                 ) : (
                   <Badge variant="outline" className="px-1.5 py-0">Using built-in default</Badge>
                 )}
@@ -574,7 +574,7 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
                   value={ttTurns} onChange={(e) => setTtTurns(e.target.value)} />
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={saveTaskTimeoutWrapup}>Save</Button>
+                <Button size="sm" onClick={saveTaskTimeoutWrapup}>保存</Button>
                 <Button size="sm" variant="outline" onClick={resetTaskTimeoutWrapup}>Restore default</Button>
               </div>
               {ttWrapupDefault && (
@@ -642,10 +642,10 @@ export function AgentEditor({ agentKey, onSaved }: { agentKey: string; onSaved?:
                 />
                 <span className="font-mono text-xs">{t.key}</span>
                 {isTraffic && (
-                  <Badge variant="secondary" className="px-1 py-0 text-[9px]">Traffic</Badge>
+                  <Badge variant="secondary" className="px-1 py-0 text-[9px]">流量</Badge>
                 )}
                 {!t.enabled && (
-                  <Badge variant="outline" className="text-destructive px-1 py-0 text-[9px]">Disabled</Badge>
+                  <Badge variant="outline" className="text-destructive px-1 py-0 text-[9px]">已禁用</Badge>
                 )}
                 {gated ? (
                   <span className="text-muted-foreground ml-auto text-xs">Requires traffic capture</span>
@@ -1126,7 +1126,7 @@ function AgentTriggersTab({ agentKey, agent }: { agentKey: string; agent?: Agent
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="font-medium">{condLabel(t)}</span>
                 {!t.enabled && (
-                  <Badge variant="outline" className="text-destructive px-1 py-0 text-[9px]">Disabled</Badge>
+                  <Badge variant="outline" className="text-destructive px-1 py-0 text-[9px]">已禁用</Badge>
                 )}
               </div>
               <div className="text-muted-foreground grid gap-0.5 text-xs">
@@ -1144,11 +1144,11 @@ function AgentTriggersTab({ agentKey, agent }: { agentKey: string; agent?: Agent
               </div>
             </div>
             <Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-foreground"
-              onClick={() => startEdit(t)} title="Edit">
+              onClick={() => startEdit(t)} title="编辑">
               <PencilIcon className="size-3.5" />
             </Button>
             <Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-destructive"
-              onClick={() => del(t.id)} title="Delete">
+              onClick={() => del(t.id)} title="删除">
               <Trash2Icon className="size-3.5" />
             </Button>
           </div>

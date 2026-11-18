@@ -201,7 +201,7 @@ export default function AssetInterceptPage() {
       <Card>
         <CardContent className="p-0">
           {loading ? (
-            <p className="p-6 text-sm text-muted-foreground">Loading…</p>
+            <p className="p-6 text-sm text-muted-foreground">加载中…</p>
           ) : rules.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
               <BanIcon className="h-8 w-8 text-muted-foreground/40" />
@@ -215,10 +215,10 @@ export default function AssetInterceptPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-[130px]">Type</TableHead>
+                  <TableHead className="w-[130px]">类型</TableHead>
                   <TableHead>Match content</TableHead>
-                  <TableHead>Note</TableHead>
-                  <TableHead className="w-[64px] text-center">Enabled</TableHead>
+                  <TableHead>备注</TableHead>
+                  <TableHead className="w-[64px] text-center">已启用</TableHead>
                   <TableHead className="w-[80px]" />
                 </TableRow>
               </TableHeader>
@@ -339,7 +339,7 @@ export default function AssetInterceptPage() {
 
           <SheetFooter className="border-t px-6 py-4 flex-row justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
+              取消
             </Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? "Saving…" : "Save"}

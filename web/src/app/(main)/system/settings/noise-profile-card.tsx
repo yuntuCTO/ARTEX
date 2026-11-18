@@ -96,7 +96,7 @@ export function NoiseProfileCard() {
             onValueChange={(v) => save(v as NoiseProfileName)}
           >
             <SelectTrigger id="noise-profile" className="w-48 shrink-0">
-              <SelectValue placeholder="Loading…" />
+              <SelectValue placeholder="加载中…" />
             </SelectTrigger>
             <SelectContent>
               {profiles.map((p) => (
@@ -112,7 +112,7 @@ export function NoiseProfileCard() {
           <span className="font-medium text-sm">Hosts, current minute</span>
           <Button variant="outline" size="sm" onClick={refresh} disabled={loading}>
             <RefreshCwIcon data-icon="inline-start" className={loading ? "animate-spin" : undefined} />
-            Refresh
+            刷新
           </Button>
         </div>
         {status?.hosts.length ? (

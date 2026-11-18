@@ -215,7 +215,7 @@ function SidePanel({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction onClick={() => void side.clear()}>Clear history</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

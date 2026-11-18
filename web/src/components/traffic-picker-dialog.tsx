@@ -144,7 +144,7 @@ export function TrafficPickerDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="all">All methods</SelectItem>
+                    <SelectItem value="all">全部方法</SelectItem>
                     {METHODS.map((m) => (
                       <SelectItem key={m} value={m}>
                         {m}
@@ -155,7 +155,7 @@ export function TrafficPickerDialog({
               </Select>
             </Field>
             <Field>
-              <FieldLabel htmlFor="evidence-query">Keyword</FieldLabel>
+              <FieldLabel htmlFor="evidence-query">关键字</FieldLabel>
               <Input
                 id="evidence-query"
                 value={query}
@@ -194,9 +194,9 @@ export function TrafficPickerDialog({
                     />
                   </TableHead>
                   <TableHead>Method / URL</TableHead>
-                  <TableHead>Time</TableHead>
+                  <TableHead>时间</TableHead>
                   <TableHead>Status code</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -248,7 +248,7 @@ export function TrafficPickerDialog({
                 disabled={loading || page === 0}
                 onClick={() => setPage((p) => p - 1)}
               >
-                Previous
+                上一页
               </Button>
               <span className="text-xs">Page {page + 1}</span>
               <Button
@@ -257,13 +257,13 @@ export function TrafficPickerDialog({
                 disabled={loading || (page + 1) * 25 >= (data?.total ?? 0)}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                下一步
               </Button>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" disabled={busy} onClick={onClose}>
-              Cancel
+              取消
             </Button>
             <Button disabled={busy || selected.size === 0} onClick={() => void save()}>
               {busy ? "Saving…" : `Bind ${selected.size} traffic records`}

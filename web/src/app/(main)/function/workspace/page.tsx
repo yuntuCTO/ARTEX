@@ -196,9 +196,9 @@ export default function WorkspacePage() {
             <FolderPlusIcon /> New folder
           </Button>
           <Button variant="outline" size="sm" onClick={() => uploadRef.current?.click()}>
-            <UploadIcon /> Upload
+            <UploadIcon /> 上传
           </Button>
-          <Button variant="ghost" size="icon" className="size-8" onClick={() => load(path)} title="Refresh">
+          <Button variant="ghost" size="icon" className="size-8" onClick={() => load(path)} title="刷新">
             <RefreshCwIcon className={cn("size-4", loading && "animate-spin")} />
           </Button>
           <input
@@ -216,10 +216,10 @@ export default function WorkspacePage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
+                <TableHead>名称</TableHead>
                 <TableHead className="w-28 text-right">Size</TableHead>
-                <TableHead className="w-40">Modified</TableHead>
-                <TableHead className="w-24 text-right">Actions</TableHead>
+                <TableHead className="w-40">已修改</TableHead>
+                <TableHead className="w-24 text-right">操作</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -257,7 +257,7 @@ export default function WorkspacePage() {
                           variant="ghost"
                           size="icon"
                           className="size-7"
-                          title="Download"
+                          title="下载"
                           onClick={() => api.workspaceDownload(e.path).catch((err) => toast.error(`Download failed: ${(err as Error).message}`))}
                         >
                           <DownloadIcon className="size-3.5" />
@@ -267,7 +267,7 @@ export default function WorkspacePage() {
                         variant="ghost"
                         size="icon"
                         className="text-destructive size-7"
-                        title="Delete"
+                        title="删除"
                         onClick={() => del(e)}
                       >
                         <Trash2Icon className="size-3.5" />
@@ -322,7 +322,7 @@ export default function WorkspacePage() {
                         variant="outline"
                         onClick={() => api.workspaceDownload(edit.file.path)}
                       >
-                        <DownloadIcon /> Download
+                        <DownloadIcon /> 下载
                       </Button>
                       <Button onClick={saveFile} disabled={!edit.dirty || edit.saving}>
                         <SaveIcon /> {edit.saving ? "Saving…" : "Save"}
@@ -351,10 +351,10 @@ export default function WorkspacePage() {
           />
           <DialogFooter>
             <Button variant="outline" onClick={() => setMkdirOpen(false)}>
-              Cancel
+              取消
             </Button>
             <Button onClick={doMkdir} disabled={!mkdirName.trim()}>
-              Create
+              创建
             </Button>
           </DialogFooter>
         </DialogContent>

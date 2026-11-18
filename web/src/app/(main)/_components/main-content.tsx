@@ -33,7 +33,7 @@ function isFullBleed(pathname: string) {
   return normalized.startsWith("/function/tasks/");
 }
 
-const RELEASES_URL = "https://github.com/BaaRai/ARTEX/releases";
+const RELEASES_URL = "https://github.com/yuntuCTO/ARTEX/releases";
 const UPDATE_DISMISSED_KEY = "artex-update-dismissed";
 
 export function MainContent({ children }: { children: ReactNode }) {
@@ -57,11 +57,11 @@ export function MainContent({ children }: { children: ReactNode }) {
   const updateBanner = latest ? (
     <div className="flex shrink-0 items-center justify-center gap-2 border-b bg-muted/50 px-4 py-1 text-xs">
       <a href={RELEASES_URL} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
-        ARTEX {latest} is available. See the release notes.
+        云途Agent {latest} 已发布，查看更新说明。
       </a>
       <button
         type="button"
-        aria-label="Dismiss update notice"
+        aria-label="关闭更新提示"
         className="text-muted-foreground hover:text-foreground"
         onClick={() => {
           setLocalStorageValue(UPDATE_DISMISSED_KEY, latest);
@@ -102,7 +102,7 @@ export function MainContent({ children }: { children: ReactNode }) {
           </div>
           <div className="flex items-center gap-2">
             {version && (
-              <span className="font-medium text-muted-foreground text-xs tabular-nums">Version · {version}</span>
+              <span className="font-medium text-muted-foreground text-xs tabular-nums">版本 · {version}</span>
             )}
             <LayoutControls />
             <ThemeSwitcher />

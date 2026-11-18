@@ -132,7 +132,7 @@ export function LinkTrafficDialog({
         </div>
         <div className="flex items-center justify-between gap-2">
           <Button variant="outline" size="sm" disabled={loading || page <= 1} onClick={() => setPage((p) => p - 1)}>
-            Previous
+            上一页
           </Button>
           <span className="text-xs">
             Page {page} · {data?.total ?? 0} total
@@ -143,7 +143,7 @@ export function LinkTrafficDialog({
             disabled={loading || page * 20 >= (data?.total ?? 0)}
             onClick={() => setPage((p) => p + 1)}
           >
-            Next
+            下一步
           </Button>
         </div>
         <p className="text-sm">
@@ -151,7 +151,7 @@ export function LinkTrafficDialog({
         </p>
         <DialogFooter>
           <Button variant="outline" disabled={busy} onClick={onClose}>
-            Cancel
+            取消
           </Button>
           <Button disabled={busy || !selected} onClick={() => void save()}>
             {busy ? "Saving…" : "Link"}

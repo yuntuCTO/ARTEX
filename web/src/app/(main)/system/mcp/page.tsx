@@ -264,7 +264,7 @@ export default function MCPPage() {
           </div>
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="m-name">Name</Label>
+          <Label htmlFor="m-name">名称</Label>
           <Input
             id="m-name"
             placeholder="filesystem"
@@ -349,11 +349,11 @@ export default function MCPPage() {
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground text-sm">{tools.length} tools</span>
           <Button size="sm" variant="outline" disabled={refreshing} onClick={refreshTools}>
-            <RefreshCwIcon className={refreshing ? "animate-spin" : ""} /> Refresh
+            <RefreshCwIcon className={refreshing ? "animate-spin" : ""} /> 刷新
           </Button>
         </div>
         {toolsLoading ? (
-          <p className="text-muted-foreground text-sm">Loading…</p>
+          <p className="text-muted-foreground text-sm">加载中…</p>
         ) : tools.length === 0 ? (
           <p className="text-muted-foreground text-sm">No tools discovered yet; click refresh to fetch again.</p>
         ) : (
@@ -421,12 +421,12 @@ export default function MCPPage() {
                   <Switch
                     checked={s.enabled}
                     onCheckedChange={() => toggleEnabled(s)}
-                    aria-label="Enable"
+                    aria-label="启用"
                   />
                   <Button
                     size="icon"
                     variant="outline"
-                    aria-label="Delete"
+                    aria-label="删除"
                     onClick={() => removeServer(s)}
                   >
                     <Trash2Icon className="text-destructive" />
@@ -485,7 +485,7 @@ export default function MCPPage() {
                 {renderForm()}
                 <div className="flex gap-2 pt-2 pb-6">
                   <Button onClick={saveForm} disabled={saving}>
-                    Save
+                    保存
                   </Button>
                 </div>
               </TabsContent>
@@ -498,7 +498,7 @@ export default function MCPPage() {
               {renderForm()}
               <div className="pt-2 pb-6">
                 <Button onClick={saveForm} disabled={saving}>
-                  <PlusIcon /> Add
+                  <PlusIcon /> 添加
                 </Button>
               </div>
             </div>

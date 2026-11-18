@@ -56,8 +56,8 @@ export function AssetInterceptRulesEditor({
               value={r.action}
               onChange={(e) => update(i, { action: e.target.value as "block" | "allow" })}
             >
-              <NativeSelectOption value="block">Block</NativeSelectOption>
-              <NativeSelectOption value="allow">Allow</NativeSelectOption>
+              <NativeSelectOption value="block">阻止</NativeSelectOption>
+              <NativeSelectOption value="allow">允许</NativeSelectOption>
             </NativeSelect>
             <NativeSelect
               size="sm"

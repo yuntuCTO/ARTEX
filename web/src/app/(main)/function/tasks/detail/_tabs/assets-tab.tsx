@@ -325,7 +325,7 @@ function AddTaskAssetsSheet({
         </div>
         <SheetFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-            Cancel
+            取消
           </Button>
           <Button
             onClick={() => void attach()}
@@ -688,7 +688,7 @@ export function AssetsTab({ taskId }: { taskId: string }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={removing}>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               disabled={removing}

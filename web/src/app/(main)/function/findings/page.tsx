@@ -1039,10 +1039,10 @@ export default function FindingsPage() {
 
           <Select value={status} onValueChange={(v) => setStatus(v as "all" | FindingStatus)}>
             <SelectTrigger size="sm" className="w-32">
-              <SelectValue placeholder="Status" />
+              <SelectValue placeholder="状态" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="all">全部状态</SelectItem>
               {FINDING_STATUSES.map((st) => (
                 <SelectItem key={st} value={st}>
                   {statusMeta("finding", st).label}
@@ -1087,7 +1087,7 @@ export default function FindingsPage() {
               <SelectValue placeholder="Vulnerability type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="all">全部类型</SelectItem>
               {stats.vulnclasses.map((vc) => (
                 <SelectItem key={vc} value={vc}>
                   {vc}
@@ -1098,7 +1098,7 @@ export default function FindingsPage() {
 
           <Select value={task} onValueChange={setTask}>
             <SelectTrigger size="sm" className="w-48">
-              <SelectValue placeholder="Task" />
+              <SelectValue placeholder="任务" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All tasks</SelectItem>
@@ -1176,7 +1176,7 @@ export default function FindingsPage() {
               </div>
             )}
             <Button size="sm" variant="outline" onClick={openExport}>
-              <DownloadIcon /> Export
+              <DownloadIcon /> 导出
             </Button>
           </div>
         </div>
@@ -1413,7 +1413,7 @@ export default function FindingsPage() {
               }}
               disabled={deepening}
             >
-              Cancel
+              取消
             </Button>
             <Button onClick={submitDeepen} disabled={deepening || !deepenDescription.trim()}>
               {deepening && <Spinner data-icon="inline-start" />}
@@ -1472,7 +1472,7 @@ export default function FindingsPage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setExportOpen(false)} disabled={exporting}>
-              Cancel
+              取消
             </Button>
             <Button onClick={doExport} disabled={exporting || (exportScope === "selected" && selectedIds.size === 0)}>
               <DownloadIcon /> {exporting ? "Exporting…" : "Export"}

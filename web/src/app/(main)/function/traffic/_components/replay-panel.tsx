@@ -135,7 +135,7 @@ export function ReplayPanel({
     <div className="space-y-4 p-5">
       <div className="flex gap-2">
         <Input
-          aria-label="Method"
+          aria-label="方法"
           className="w-32 font-mono uppercase"
           list={methodListId}
           value={form.method}
@@ -177,7 +177,7 @@ export function ReplayPanel({
             <Input
               aria-label="Header name"
               className={cn("w-48 font-mono text-xs", ignored.has(row.name.trim().toLowerCase()) && "line-through")}
-              placeholder="Name"
+              placeholder="名称"
               value={row.name}
               onChange={(e) => updateRow(row.key, { name: e.target.value })}
             />
@@ -204,7 +204,7 @@ export function ReplayPanel({
       </div>
 
       <div className="space-y-2">
-        <span className="font-medium text-sm">Body</span>
+        <span className="font-medium text-sm">正文</span>
         {form.binary ? (
           <p className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-amber-700 text-xs dark:text-amber-400">
             The recorded body is binary (it contains NUL bytes). Replaying a binary body is not supported.
@@ -212,7 +212,7 @@ export function ReplayPanel({
         ) : (
           <>
             <Textarea
-              aria-label="Body"
+              aria-label="正文"
               className="font-mono text-xs"
               value={form.body}
               onChange={(e) => update({ body: e.target.value })}

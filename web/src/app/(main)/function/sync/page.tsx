@@ -142,7 +142,7 @@ function DataSourceCard({
           <StatusBadge status={status} loading={loading} />
         </CardTitle>
         <Button variant="ghost" size="sm" onClick={onChanged} disabled={loading}>
-          <RefreshCwIcon className={loading ? "size-4 animate-spin" : "size-4"} /> Refresh
+          <RefreshCwIcon className={loading ? "size-4 animate-spin" : "size-4"} /> 刷新
         </Button>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -292,7 +292,7 @@ function SyncWorkbench() {
       return (
         <TableRow>
           <TableCell colSpan={4} className="py-8 text-center text-muted-foreground text-sm">
-            Loading…
+            加载中…
           </TableCell>
         </TableRow>
       );
@@ -301,7 +301,7 @@ function SyncWorkbench() {
       return (
         <TableRow>
           <TableCell colSpan={4} className="py-8 text-center text-muted-foreground text-sm">
-            No data
+            暂无数据
           </TableCell>
         </TableRow>
       );
@@ -414,12 +414,12 @@ function SyncWorkbench() {
                 {dimension === "project" ? (
                   <>
                     <TableHead>Tag</TableHead>
-                    <TableHead className="text-right">Assets</TableHead>
+                    <TableHead className="text-right">资产</TableHead>
                   </>
                 ) : (
                   <>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Time</TableHead>
+                    <TableHead>状态</TableHead>
+                    <TableHead>时间</TableHead>
                   </>
                 )}
               </TableRow>
@@ -431,7 +431,7 @@ function SyncWorkbench() {
         {/* Pagination */}
         <div className="flex items-center justify-end gap-2">
           <Button variant="outline" size="sm" disabled={page <= 1 || loading} onClick={() => setPage((p) => p - 1)}>
-            Previous
+            上一页
           </Button>
           <span className="text-muted-foreground text-xs">Page {page}</span>
           <Button
@@ -440,7 +440,7 @@ function SyncWorkbench() {
             disabled={rows.length < 50 || loading}
             onClick={() => setPage((p) => p + 1)}
           >
-            Next
+            下一步
           </Button>
         </div>
 

@@ -516,7 +516,7 @@ function ProfileSheet({
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pb-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
-              <Label htmlFor="p-name">Name</Label>
+              <Label htmlFor="p-name">名称</Label>
               <Input
                 id="p-name"
                 placeholder="e.g. OpenAI production"
@@ -541,7 +541,7 @@ function ProfileSheet({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="p-model">Model</Label>
+            <Label htmlFor="p-model">模型</Label>
             <div className="flex gap-2">
               <Input
                 id="p-model"
@@ -956,7 +956,7 @@ export default function LLMPage() {
             )}
           </Button>
           <Button size="sm" variant="outline" onClick={() => openEditor(null)}>
-            <PlusIcon /> Create
+            <PlusIcon /> 创建
           </Button>
         </div>
       </div>

@@ -250,7 +250,7 @@ function TaskTemplateManager({
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="task-template-description">Description</FieldLabel>
+                  <FieldLabel htmlFor="task-template-description">描述</FieldLabel>
                   <Textarea
                     id="task-template-description"
                     className="min-h-28"
@@ -260,7 +260,7 @@ function TaskTemplateManager({
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="task-template-goal">Goal</FieldLabel>
+                  <FieldLabel htmlFor="task-template-goal">目标</FieldLabel>
                   <Textarea
                     id="task-template-goal"
                     className="min-h-28"
@@ -279,7 +279,7 @@ function TaskTemplateManager({
                       patchDraft({ categoryID: event.target.value === "" ? null : Number(event.target.value) })
                     }
                   >
-                    <NativeSelectOption value="">Uncategorized</NativeSelectOption>
+                    <NativeSelectOption value="">未分类</NativeSelectOption>
                     {categories.map((c) => (
                       <NativeSelectOption key={c.id} value={String(c.id)}>
                         {c.name}
@@ -309,7 +309,7 @@ function TaskTemplateManager({
               </Button>
             )}
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Close
+              关闭
             </Button>
             <Button type="button" disabled={saving} onClick={() => void save()}>
               {saving ? <Spinner data-icon="inline-start" /> : <SaveIcon data-icon="inline-start" />}
@@ -325,7 +325,7 @@ function TaskTemplateManager({
             <AlertDialogDescription>Tasks already created from this template are not affected.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               disabled={deleting}
@@ -515,7 +515,7 @@ export function TaskTemplateControls({
             <AlertDialogDescription>The description and goal already filled in will be overwritten by the template.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction onClick={() => pendingTemplate && applyTemplate(pendingTemplate)}>
               Overwrite and use
             </AlertDialogAction>

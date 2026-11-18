@@ -355,7 +355,7 @@ export default function SystemSettingsPage() {
               With <b>traffic capture</b> on, it acts as the recording proxy's <b>upstream</b> (traffic is still stored in full, then egresses through this proxy); with capture off, it is injected directly into
               the agent's bash / WebFetch egress. Independent of the web search proxy and the LLM proxy.
               <br />
-              <b>Note</b>: with <b>capture off</b>, socks5 relies on each CLI tool honoring <code>ALL_PROXY</code> (curl
+              <b>备注</b>: with <b>capture off</b>, socks5 relies on each CLI tool honoring <code>ALL_PROXY</code> (curl
               works; some tools may ignore it). If you mainly use socks5, enable traffic capture — on that path the MITM
               does the dialing itself, invisible to tools and reliably effective.
             </CardDescription>
@@ -374,7 +374,7 @@ export default function SystemSettingsPage() {
                 onChange={(e) => setGlobalProxyInput(e.target.value)}
               />
               <Button type="button" onClick={saveGlobalProxy} disabled={!loaded || savingGlobalProxy}>
-                Save
+                保存
               </Button>
             </div>
             <p className="text-muted-foreground text-xs">
@@ -548,7 +548,7 @@ export default function SystemSettingsPage() {
                     onClick={saveBraveKey}
                     disabled={!loaded || savingKey || braveKeyInput.trim() === ""}
                   >
-                    Save
+                    保存
                   </Button>
                 </div>
                 {braveNeedsKey && (
@@ -583,7 +583,7 @@ export default function SystemSettingsPage() {
                     onClick={saveTavilyKey}
                     disabled={!loaded || savingTavilyKey || tavilyKeyInput.trim() === ""}
                   >
-                    Save
+                    保存
                   </Button>
                 </div>
                 {webSearch && backend === "tavily" && !tavilyKeySet && (
@@ -616,7 +616,7 @@ export default function SystemSettingsPage() {
                     onClick={saveKeenableKey}
                     disabled={!loaded || savingKeenableKey || keenableKeyInput.trim() === ""}
                   >
-                    Save
+                    保存
                   </Button>
                 </div>
                 <p className="text-muted-foreground text-xs leading-relaxed">
@@ -643,7 +643,7 @@ export default function SystemSettingsPage() {
                     onChange={(e) => setProxyInput(e.target.value)}
                   />
                   <Button type="button" onClick={saveProxy} disabled={!loaded || savingProxy}>
-                    Save
+                    保存
                   </Button>
                 </div>
                 <p className="text-muted-foreground text-xs">
@@ -678,7 +678,7 @@ export default function SystemSettingsPage() {
               Custom scripts · Python interpreter
             </CardTitle>
             <CardDescription>
-              Custom <b>script</b> tools run Python with it. Auto-detected at startup (python3 first); you can enter an absolute path to a venv /
+              自定义 <b>script</b> tools run Python with it. Auto-detected at startup (python3 first); you can enter an absolute path to a venv /
               specific version here; leave empty to auto-detect at runtime.
             </CardDescription>
           </CardHeader>
@@ -695,7 +695,7 @@ export default function SystemSettingsPage() {
                 Re-detect
               </Button>
               <Button onClick={savePython} disabled={!loaded || saving}>
-                Save
+                保存
               </Button>
             </div>
           </CardContent>
@@ -724,7 +724,7 @@ export default function SystemSettingsPage() {
                 onChange={(e) => setWorkers(e.target.value)}
               />
               <Button onClick={saveWorkers} disabled={!loaded || savingWorkers}>
-                Save
+                保存
               </Button>
             </div>
           </CardContent>

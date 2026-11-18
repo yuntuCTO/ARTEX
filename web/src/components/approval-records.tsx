@@ -315,11 +315,11 @@ function DecisionActions({ row, busy, decide }: { row: InterceptApprovalRow; bus
     <div className="flex flex-wrap gap-2">
       <Button size="sm" disabled={busy} onClick={() => void decide(row.id, "allowed")}>
         <CheckIcon data-icon="inline-start" />
-        Allow
+        允许
       </Button>
       <Button size="sm" variant="destructive" disabled={busy} onClick={() => void decide(row.id, "denied")}>
         <XIcon data-icon="inline-start" />
-        Deny
+        拒绝
       </Button>
     </div>
   );
@@ -452,7 +452,7 @@ export function ApprovalDetail({
           {audit?.decision_reason ? <p className="text-sm">{audit.decision_reason}</p> : null}
           {audit?.effective_action ? <p className="text-sm">Final action: {actionLabels[audit.effective_action]}</p> : null}
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2 text-xs">
-            <dt className="text-muted-foreground">Source</dt>
+            <dt className="text-muted-foreground">来源</dt>
             <dd className="break-words">
               <ApprovalOrigin row={current} detail />
             </dd>
@@ -507,7 +507,7 @@ export function ApprovalDetail({
             <div className="flex flex-wrap items-center gap-2">
               <span>Failed to load details: {error}</span>
               <Button variant="outline" size="sm" onClick={() => setRetry((v) => v + 1)}>
-                Retry
+                重试
               </Button>
             </div>
           </AlertDescription>
@@ -695,10 +695,10 @@ function ApprovalTable({
           </TableHead>
           <TableHead className="hidden w-14 sm:table-cell">#</TableHead>
           <TableHead className="w-28">Tool</TableHead>
-          <TableHead className="hidden md:table-cell">Source</TableHead>
+          <TableHead className="hidden md:table-cell">来源</TableHead>
           <TableHead className="hidden lg:table-cell">Matched rule</TableHead>
           <TableHead className="hidden xl:table-cell">Arguments</TableHead>
-          <TableHead className="w-24">Status</TableHead>
+          <TableHead className="w-24">状态</TableHead>
           <TableHead className="hidden w-24 lg:table-cell">Decided by</TableHead>
           <TableHead className="hidden w-36 lg:table-cell">Requested at</TableHead>
           <TableHead className="hidden w-36 xl:table-cell">Decided at</TableHead>
@@ -993,7 +993,7 @@ export function ApprovalRecords({ taskId }: { taskId?: string }) {
         </div>
         <Button variant="outline" size="sm" onClick={() => void load(true)} disabled={loading || refreshing}>
           <RefreshCwIcon data-icon="inline-start" className={cn(refreshing && "animate-spin")} />
-          Refresh
+          刷新
         </Button>
       </div>
       <p className="text-muted-foreground text-sm">Expand a record to view the tool request and approval decision, along with the context and execution result at the time.</p>
@@ -1014,7 +1014,7 @@ export function ApprovalRecords({ taskId }: { taskId?: string }) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="all">全部状态</SelectItem>
                 <SelectItem value="denied">Denied</SelectItem>
                 <SelectItem value="pending">Pending approval</SelectItem>
                 <SelectItem value="allowed">Allowed</SelectItem>
@@ -1153,7 +1153,7 @@ export function ApprovalRecords({ taskId }: { taskId?: string }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deciding}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deciding}>取消</AlertDialogCancel>
             <AlertDialogAction
               variant={batchDecision === "denied" ? "destructive" : "default"}
               disabled={deciding || !selectedRows.length}

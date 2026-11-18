@@ -301,7 +301,7 @@ function InterceptCard({
               onClick={() => decide("allowed")}
             >
               <CheckIcon className="h-3 w-3" />
-              Allow
+              允许
             </Button>
             <Button
               size="sm"
@@ -311,7 +311,7 @@ function InterceptCard({
               onClick={() => decide("denied")}
             >
               <XIcon className="h-3 w-3" />
-              Deny
+              拒绝
             </Button>
           </div>
         )}

@@ -497,7 +497,7 @@ export default function DashboardPage() {
       {/* ── Header ── */}
       <div>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">Overview</h1>
+          <h1 className="text-lg font-semibold tracking-tight">概览</h1>
           <p className="text-xs text-muted-foreground">System-wide status · live refresh</p>
         </div>
       </div>
@@ -638,7 +638,7 @@ export default function DashboardPage() {
                   : "bg-muted/30 text-muted-foreground hover:text-foreground",
               )}
             >
-              All
+              全部
             </button>
             {llmProfiles.map((p) => {
               const key = Number(p.id);
@@ -667,7 +667,7 @@ export default function DashboardPage() {
                           : "bg-emerald-500/20 text-emerald-400",
                       )}
                     >
-                      Default
+                      默认
                     </span>
                   )}
                 </button>
@@ -797,7 +797,7 @@ export default function DashboardPage() {
                 className="flex flex-1 items-center justify-center rounded-lg border bg-muted/10 text-xs text-muted-foreground"
                 style={{ minHeight: 180 }}
               >
-                No data
+                暂无数据
               </div>
             ) : (
               <ChartContainer config={dailyTrendConfig} className="h-[200px] w-full">
@@ -920,7 +920,7 @@ export default function DashboardPage() {
               href="/function/findings"
               className="flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-foreground"
             >
-              All <ArrowUpRightIcon className="size-3" />
+              全部 <ArrowUpRightIcon className="size-3" />
             </Link>
           </div>
 
@@ -967,7 +967,7 @@ export default function DashboardPage() {
               href="/function/tasks"
               className="flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-foreground"
             >
-              All <ArrowUpRightIcon className="size-3" />
+              全部 <ArrowUpRightIcon className="size-3" />
             </Link>
           </div>
         </div>

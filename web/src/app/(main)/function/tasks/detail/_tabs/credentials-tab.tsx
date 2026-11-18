@@ -127,7 +127,7 @@ export function CredentialsTab({ taskId }: { taskId: string }) {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button variant="outline" disabled={adding || !domain.trim() || !username.trim()} onClick={add}>
-            <PlusIcon /> Add
+            <PlusIcon /> 添加
           </Button>
           <Input className="sm:col-span-4" placeholder="note (optional, e.g. program alias account)" value={note} onChange={(e) => setNote(e.target.value)} />
         </div>

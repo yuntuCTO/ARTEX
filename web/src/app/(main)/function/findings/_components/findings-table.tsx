@@ -232,14 +232,14 @@ export function FindingsTable({
             />
           </TableHead>
           <TableHead className="w-8" />
-          <TableHead className="w-20">Severity</TableHead>
-          <TableHead>Vulnerability</TableHead>
+          <TableHead className="w-20">严重性</TableHead>
+          <TableHead>漏洞</TableHead>
           <TableHead className="w-44">Asset</TableHead>
-          <TableHead className="w-28">Status</TableHead>
+          <TableHead className="w-28">状态</TableHead>
           <TableHead className="w-36">Report</TableHead>
-          <TableHead className="w-32">Task</TableHead>
-          <TableHead className="w-24">Time</TableHead>
-          <TableHead className="w-48">Actions</TableHead>
+          <TableHead className="w-32">任务</TableHead>
+          <TableHead className="w-24">时间</TableHead>
+          <TableHead className="w-48">操作</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -420,8 +420,8 @@ export function FindingsTable({
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => onDelete(f)}>Delete</AlertDialogAction>
+                            <AlertDialogCancel>取消</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => onDelete(f)}>删除</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -439,7 +439,7 @@ export function FindingsTable({
                       {f.finding_id && edit && (
                         <div className="flex flex-wrap items-end gap-3 rounded-md border bg-background px-3 py-2.5">
                           <div className="flex min-w-[12rem] flex-1 flex-col gap-1">
-                            <Label className="text-xs text-muted-foreground">Vulnerability</Label>
+                            <Label className="text-xs text-muted-foreground">漏洞</Label>
                             <Input
                               value={edit.name}
                               onChange={(e) => onEditChange((s) => (s ? { ...s, name: e.target.value } : s))}
@@ -447,7 +447,7 @@ export function FindingsTable({
                             />
                           </div>
                           <div className="flex min-w-[10rem] flex-col gap-1">
-                            <Label className="text-xs text-muted-foreground">Category</Label>
+                            <Label className="text-xs text-muted-foreground">分类</Label>
                             <Input
                               value={edit.vulnclass}
                               onChange={(e) => onEditChange((s) => (s ? { ...s, vulnclass: e.target.value } : s))}
@@ -455,7 +455,7 @@ export function FindingsTable({
                             />
                           </div>
                           <div className="flex flex-col gap-1">
-                            <Label className="text-xs text-muted-foreground">Severity</Label>
+                            <Label className="text-xs text-muted-foreground">严重性</Label>
                             <Select
                               value={edit.severity}
                               onValueChange={(v) => onEditChange((s) => (s ? { ...s, severity: v as Severity } : s))}
@@ -522,7 +522,7 @@ export function FindingsTable({
                           {(() => {
                             const rep = reports[rowKey];
                             if (!rep || rep.status === "loading")
-                              return <p className="text-xs text-muted-foreground">Loading…</p>;
+                              return <p className="text-xs text-muted-foreground">加载中…</p>;
                             if (rep.status === "error")
                               return <p className="text-xs text-muted-foreground">Failed to load the report.</p>;
                             if (!rep.text.trim())

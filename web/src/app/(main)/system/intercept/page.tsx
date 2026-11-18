@@ -186,8 +186,8 @@ function argvLabel(pattern: string): string {
 // ---- small components ----
 
 function ActionBadge({ action }: { action: InterceptAction }) {
-  if (action === "allow") return <Badge variant="secondary">Allow</Badge>;
-  if (action === "deny")  return <Badge variant="destructive">Block</Badge>;
+  if (action === "allow") return <Badge variant="secondary">允许</Badge>;
+  if (action === "deny")  return <Badge variant="destructive">阻止</Badge>;
   return <Badge variant="outline" className="border-amber-400 text-amber-600">Ask</Badge>;
 }
 
@@ -322,7 +322,7 @@ function JudgeCard() {
                 </p>
               </div>
               <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={loadUsage}>
-                Refresh
+                刷新
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -411,9 +411,9 @@ function JudgeCard() {
                   <Select value={cfg.fail_action} onValueChange={(v) => patch({ fail_action: v as JudgeConfig["fail_action"] })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="allow">Allow</SelectItem>
+                      <SelectItem value="allow">允许</SelectItem>
                       <SelectItem value="ask">Escalate to human approval</SelectItem>
-                      <SelectItem value="deny">Block</SelectItem>
+                      <SelectItem value="deny">阻止</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -438,8 +438,8 @@ function JudgeCard() {
                   <Select value={cfg.ask_timeout_action} onValueChange={(v) => patch({ ask_timeout_action: v as JudgeConfig["ask_timeout_action"] })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="deny">Block</SelectItem>
-                      <SelectItem value="allow">Allow</SelectItem>
+                      <SelectItem value="deny">阻止</SelectItem>
+                      <SelectItem value="allow">允许</SelectItem>
                     </SelectContent>
                   </Select>
                 </Field>
@@ -693,7 +693,7 @@ export default function InterceptPage() {
           <Card>
             <CardContent className="p-0">
           {loading ? (
-            <p className="p-6 text-sm text-muted-foreground">Loading…</p>
+            <p className="p-6 text-sm text-muted-foreground">加载中…</p>
           ) : rules.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
               <ShieldAlertIcon className="h-8 w-8 text-muted-foreground/40" />
@@ -708,12 +708,12 @@ export default function InterceptPage() {
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="w-[72px]">Priority</TableHead>
-                  <TableHead>Name</TableHead>
+                  <TableHead>名称</TableHead>
                   <TableHead className="w-[90px]">Target</TableHead>
-                  <TableHead className="w-[80px]">Type</TableHead>
+                  <TableHead className="w-[80px]">类型</TableHead>
                   <TableHead>Pattern</TableHead>
                   <TableHead className="w-[72px]">Policy</TableHead>
-                  <TableHead className="w-[64px] text-center">Enabled</TableHead>
+                  <TableHead className="w-[64px] text-center">已启用</TableHead>
                   <TableHead className="w-[80px]" />
                 </TableRow>
               </TableHeader>
@@ -791,7 +791,7 @@ export default function InterceptPage() {
           </SheetHeader>
 
           <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 space-y-5">
-            <Field label="Name">
+            <Field label="名称">
               <Input
                 placeholder="Give the rule a name"
                 value={form.name}
@@ -947,7 +947,7 @@ export default function InterceptPage() {
           </div>
 
           <SheetFooter className="border-t px-6 py-4 flex-row justify-end gap-2">
-            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setOpen(false)}>取消</Button>
             <Button onClick={handleSave} disabled={saving || !!regexErr}>
               {saving ? "Saving…" : "Save"}
             </Button>
@@ -970,7 +970,7 @@ export default function InterceptPage() {
 
           <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-5">
             {scopeLoading ? (
-              <p className="text-sm text-muted-foreground py-4">Loading…</p>
+              <p className="text-sm text-muted-foreground py-4">加载中…</p>
             ) : (
               toolGroups.map((group, gi) => (
                 <div key={group.label}>
@@ -1006,7 +1006,7 @@ export default function InterceptPage() {
           </div>
 
           <div className="shrink-0 border-t px-6 py-3 flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={() => setScopeOpen(false)}>Cancel</Button>
+            <Button variant="outline" size="sm" onClick={() => setScopeOpen(false)}>取消</Button>
             <Button size="sm" onClick={saveScope} disabled={scopeSaving || scopeLoading}>
               {scopeSaving ? "Saving…" : "Save"}
             </Button>

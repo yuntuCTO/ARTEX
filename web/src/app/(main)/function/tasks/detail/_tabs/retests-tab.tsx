@@ -75,7 +75,7 @@ export function RetestsTab({ taskId }: { taskId: string }) {
           <AlertDescription>
             Failed to load task vulnerabilities: {error}
             <Button variant="outline" size="sm" onClick={refresh}>
-              Retry
+              重试
             </Button>
           </AlertDescription>
         </Alert>
