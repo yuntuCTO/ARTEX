@@ -39,12 +39,12 @@ function ProfileRoleBadge({ index, currentIndex }: { index: number; currentIndex
   if (index === currentIndex) return <Badge variant="default">当前</Badge>;
   if (index < currentIndex) {
     return (
-      <Badge variant="outline" title="Profiles before the current cursor are not picked by automatic failover">
-        Skipped
+      <Badge variant="outline" title="当前游标之前的配置不会被自动故障转移选中">
+        已跳过
       </Badge>
     );
   }
-  return <Badge variant="secondary">Fallback {index - currentIndex}</Badge>;
+  return <Badge variant="secondary">备用 {index - currentIndex}</Badge>;
 }
 
 export function TaskLLMProfileChain({
@@ -79,7 +79,7 @@ export function TaskLLMProfileChain({
   const profileLabel = React.useCallback(
     (id: string) => {
       const profile = profilesByID.get(id);
-      return profile ? `${profile.name} ${profile.model}` : `Profile #${id}`;
+      return profile ? `${profile.name} ${profile.model}` : `配置 #${id}`;
     },
     [profilesByID],
   );
@@ -110,32 +110,29 @@ export function TaskLLMProfileChain({
       {onRotateChange && (
         <div className="flex flex-col gap-2">
           <label htmlFor={rotationID} className="flex items-center justify-between gap-3 font-medium text-sm">
-            Enable multi-LLM worker rotation
+            启用多 LLM 执行器轮换
             <Switch id={rotationID} checked={rotate} onCheckedChange={onRotateChange} disabled={disabled} />
           </label>
           <p className="text-muted-foreground text-xs">
             {rotate
-              ? "New worker intents use the selected profiles in round-robin order. Independent workers can run on different providers simultaneously. Other roles keep the current profile."
-              : "Ordered failover: workers share the current profile and switch after quota exhaustion or repeated provider failures."}
+              ? "新的执行器意图按轮询顺序使用所选配置。独立的执行器可同时运行在不同的服务商上。其他角色保持当前配置。"
+              : "有序故障转移：执行器共享当前配置，在额度耗尽或服务商反复失败后切换。"}
           </p>
           {rotate && value.length < 2 && (
-            <p className="text-amber-600 text-xs">Select at least two profiles to distribute work across providers.</p>
+            <p className="text-amber-600 text-xs">至少选择两个配置，才能在多个服务商之间分配工作。</p>
           )}
           {rotate && workerBinding != null && (
             <p role="alert" className="text-amber-600 text-xs">
-              Worker has a fixed model binding, which overrides rotation. Set Worker’s model to follow the task in Agent
-              settings to use these profiles.
+              执行器绑定了固定模型，会覆盖轮换。请在智能体设置中将执行器的模型设为跟随任务，以使用这些配置。
             </p>
           )}
           {rotate && bindingCheckFailed && (
-            <p className="text-amber-600 text-xs">
-              Worker binding could not be checked. A fixed Worker model overrides rotation; verify Agent settings.
-            </p>
+            <p className="text-amber-600 text-xs">无法检查执行器绑定。固定的执行器模型会覆盖轮换，请检查智能体设置。</p>
           )}
           {rotate && (
             <p className="text-muted-foreground text-xs">
-              Set concurrent worker count to at least 2 in System settings before starting the task. In-flight calls
-              keep their provider. Exhausted profiles are skipped until the chain is reset.
+              启动任务前，请在系统设置中将并发执行器数设为至少
+              2。进行中的调用保持原服务商。耗尽的配置会被跳过，直到链路重置。
             </p>
           )}
         </div>
@@ -156,12 +153,12 @@ export function TaskLLMProfileChain({
           </ComboboxValue>
           <ComboboxChipsInput
             id={inputId}
-            placeholder={profiles.length > 0 ? "Search and add LLM profiles" : "No LLM profiles available"}
+            placeholder={profiles.length > 0 ? "搜索并添加 LLM 配置" : "暂无可用的 LLM 配置"}
             disabled={disabled ? true : profilesUnavailable}
           />
         </ComboboxChips>
         <ComboboxContent portalContainer={portalContainer}>
-          <ComboboxEmpty>No matching LLM profiles</ComboboxEmpty>
+          <ComboboxEmpty>没有匹配的 LLM 配置</ComboboxEmpty>
           <ComboboxList>
             {(id) => {
               const profile = profilesByID.get(id);
@@ -170,8 +167,8 @@ export function TaskLLMProfileChain({
                   <div className="flex min-w-0 flex-1 flex-col">
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate">
-                        {profile?.name ?? `Profile #${id}`}
-                        {profile?.is_default ? " (active)" : ""}
+                        {profile?.name ?? `配置 #${id}`}
+                        {profile?.is_default ? "（激活）" : ""}
                       </span>
                     </span>
                     {profile && <span className="truncate text-muted-foreground text-xs">{profile.model}</span>}
@@ -184,9 +181,7 @@ export function TaskLLMProfileChain({
       </Combobox>
 
       {value.length === 0 ? (
-        <p className="text-muted-foreground text-xs">
-          When no profile is set, the task follows the agent or the global active profile.
-        </p>
+        <p className="text-muted-foreground text-xs">未设置配置时，任务跟随智能体或全局激活配置。</p>
       ) : (
         <div className="flex flex-col divide-y rounded-lg border">
           {value.map((id, index) => {
@@ -198,13 +193,13 @@ export function TaskLLMProfileChain({
               >
                 <span className="w-5 shrink-0 text-center text-muted-foreground text-xs tabular-nums">{index + 1}</span>
                 <div className="min-w-0 sm:flex-1">
-                  <p className="truncate font-medium text-sm">{profile?.name ?? `Profile #${id}`}</p>
+                  <p className="truncate font-medium text-sm">{profile?.name ?? `配置 #${id}`}</p>
                   <div className="flex min-w-0 items-center gap-2">
-                    <p className="truncate text-muted-foreground text-xs">{profile?.model ?? "Profile unavailable"}</p>
+                    <p className="truncate text-muted-foreground text-xs">{profile?.model ?? "配置不可用"}</p>
                   </div>
                 </div>
                 {rotate ? (
-                  <Badge variant="secondary">Rotation {index + 1}</Badge>
+                  <Badge variant="secondary">轮换 {index + 1}</Badge>
                 ) : (
                   <ProfileRoleBadge index={index} currentIndex={currentIndex} />
                 )}
@@ -213,7 +208,7 @@ export function TaskLLMProfileChain({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    aria-label="Move profile up"
+                    aria-label="上移配置"
                     onClick={() => move(index, -1)}
                     disabled={disabled ? true : index === 0}
                   >
@@ -223,7 +218,7 @@ export function TaskLLMProfileChain({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    aria-label="Move profile down"
+                    aria-label="下移配置"
                     onClick={() => move(index, 1)}
                     disabled={disabled ? true : index === value.length - 1}
                   >
@@ -233,7 +228,7 @@ export function TaskLLMProfileChain({
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    aria-label="Remove profile"
+                    aria-label="移除配置"
                     onClick={() => remove(id)}
                     disabled={disabled}
                   >
@@ -248,7 +243,7 @@ export function TaskLLMProfileChain({
 
       {onActiveProfileChange && value.length > 0 && (
         <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-          <span className="font-medium text-sm">{rotate ? "Planner / failover profile" : "Current profile"}</span>
+          <span className="font-medium text-sm">{rotate ? "规划器 / 故障转移配置" : "当前配置"}</span>
           <Select
             value={activeProfileId && value.includes(activeProfileId) ? activeProfileId : value[0]}
             onValueChange={onActiveProfileChange}
@@ -263,7 +258,7 @@ export function TaskLLMProfileChain({
                   const profile = profilesByID.get(id);
                   return (
                     <SelectItem key={id} value={id} disabled={!profile}>
-                      {profile?.name ?? `Profile #${id}`}
+                      {profile?.name ?? `配置 #${id}`}
                     </SelectItem>
                   );
                 })}
