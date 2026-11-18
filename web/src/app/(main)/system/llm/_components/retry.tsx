@@ -52,65 +52,65 @@ type LayerMeta = {
 
 export const RETRY_LAYERS = {
   connect: {
-    title: "Connect retry",
-    where: "SDK · before a 200 arrives",
+    title: "连接重试",
+    where: "SDK · 收到 200 之前",
     trigger:
-      "Cannot connect or no 200 yet: network-layer errors such as connection reset / read-write timeout / DNS failure, plus HTTP 408, 429, 500, 502, 503, 504.",
-    skips: "The remaining status codes (400 / 401 / 403 / 404 / 413 / 422 etc.) are deterministic rejections — resending fails the same way, so they bubble up directly.",
-    desc: "Resends the same request verbatim. Once the stream has started (a 200 was received), a mid-stream drop is no longer this layer's business.",
-    attemptsLabel: "Retry attempts",
+      "无法连接或尚未收到 200：连接重置 / 读写超时 / DNS 解析失败等网络层错误，以及 HTTP 408、429、500、502、503、504。",
+    skips: "其余状态码（400 / 401 / 403 / 404 / 413 / 422 等）属于确定性拒绝——重发也会以同样方式失败，因此直接向上抛出。",
+    desc: "原样重发同一请求。一旦流已开始（已收到 200），流中途断开便不再由本层处理。",
+    attemptsLabel: "重试次数",
     defAttempts: 3,
-    defInterval: "0.5s→1s→2s exponential (capped at 8s)",
-    offHint: "-1 = no retries at all; the failure bubbles up immediately",
+    defInterval: "0.5s→1s→2s 指数退避（上限 8s）",
+    offHint: "-1 = 完全不重试，失败立即向上抛出",
   },
   empty: {
-    title: "Empty-response retry",
-    where: "SDK · openai format only",
+    title: "空响应重试",
+    where: "SDK · 仅 openai 格式",
     trigger:
-      "HTTP 200 with a normal stop finish_reason, yet not a single content block in the response — gateway empty frames, dropped thinking-field frames and sampling hiccups all look like this.",
-    skips: "Empty because of max_tokens truncation does not count (fix that by raising the output cap; resending just hits it again).",
-    desc: "Resends the entire prompt, so it is relatively expensive on long contexts; keep the count small.",
-    attemptsLabel: "Retry attempts",
+      "HTTP 200 且 finish_reason 为正常的 stop，但响应中没有任何内容块——网关空帧、丢失 thinking 字段帧以及采样异常都会表现为这样。",
+    skips: "因 max_tokens 截断导致的空响应不计入（应调高输出上限解决；重发只会再次触顶）。",
+    desc: "会重发整个提示词，长上下文下开销较大，次数宜少。",
+    attemptsLabel: "重试次数",
     defAttempts: 2,
-    defInterval: "0.5s→1s→2s exponential (capped at 8s)",
-    offHint: "-1 = hand the empty response through as-is",
+    defInterval: "0.5s→1s→2s 指数退避（上限 8s）",
+    offHint: "-1 = 将空响应原样透传",
   },
   stream: {
-    title: "Same-provider safe-window retry",
-    where: "This project · before any output is delivered",
+    title: "同供应商安全窗口重试",
+    where: "本项目 · 尚未交付任何输出之前",
     trigger:
-      "Trouble only after the stream is established (a 200 received): mid-stream disconnects, provider overloaded, in-stream 429 / 5xx error events — while not a single token has been handed to the caller yet.",
+      "流建立后（已收到 200）才出现的问题：流中途断开、供应商过载、流内 429 / 5xx 错误事件——且此时尚未向调用方交付任何 token。",
     skips:
-      "Quota exhausted (402 / insufficient_quota, handed to the pool to switch configs), context too long (413 / context length, handed to compression), and deterministic rejections (400 / 401 / 403 / 404 / 422) are never retried.",
-    desc: "Replays the same request on the same config. Since no output has been delivered yet, the replay cannot duplicate model output or tool executions.",
-    attemptsLabel: "Retry attempts",
+      "额度耗尽（402 / insufficient_quota，交由池切换配置）、上下文过长（413 / context length，交由压缩处理）以及确定性拒绝（400 / 401 / 403 / 404 / 422）均不会重试。",
+    desc: "在同一配置上重放同一请求。由于尚未交付任何输出，重放不会造成模型输出或工具执行的重复。",
+    attemptsLabel: "重试次数",
     defAttempts: 2,
-    defInterval: "0.5s→1s exponential (capped at 4s)",
-    offHint: "-1 = a broken stream goes straight to the outer intent rerun",
+    defInterval: "0.5s→1s 指数退避（上限 4s）",
+    offHint: "-1 = 流中断后直接交给外层的意图重跑",
   },
   breaker: {
-    title: "Pool breaker",
-    where: "This project · process-level, one global copy",
+    title: "池熔断",
+    where: "本项目 · 进程级，全局唯一",
     trigger:
-      "Trips when transient failures (429, 5xx, network errors) accumulate consecutively to the threshold; deterministic failures — insufficient balance (402), dead key (401 / 403), missing model (404) — ignore the threshold and trip on the first occurrence.",
-    skips: "One success resets the counter, so an occasionally flaky config is not slowly ground into tripping.",
-    desc: "After tripping it enters cooldown, and while cooling the pool skips the config outright. State is persisted, surviving restarts.",
-    attemptsLabel: "Consecutive failures to trip",
+      "瞬时失败（429、5xx、网络错误）连续累计达到阈值时熔断；确定性失败——余额不足（402）、Key 失效（401 / 403）、模型不存在（404）——无视阈值，首次出现即熔断。",
+    skips: "一次成功即重置计数，因此偶尔不稳定的配置不会被慢慢累积到熔断。",
+    desc: "熔断后进入冷却，冷却期间池会直接跳过该配置。状态会持久化，重启后依然保留。",
+    attemptsLabel: "触发熔断的连续失败次数",
     defAttempts: 3,
-    defInterval: "1min→5min→30min gradient",
-    offHint: "-1 = transient failures never trip (deterministic failures still do)",
+    defInterval: "1min→5min→30min 梯度",
+    offHint: "-1 = 瞬时失败永不熔断（确定性失败仍会熔断）",
   },
   intent: {
-    title: "Intent rerun",
-    where: "This project · process-level, one global copy",
+    title: "意图重跑",
+    where: "本项目 · 进程级，全局唯一",
     trigger:
-      "The earlier layers could not save it: the worker ends with model_error — inner retries all exhausted, or the stream broke only after output delivery had started (when replay is unsafe and only a full rerun works).",
-    skips: "Quota exhaustion is already handled by the pool switching configs and is not rerun here; when the task is paused / aborted / wrapping up it yields immediately, spending no backoff time.",
-    desc: "Reruns the whole intent from scratch. It is the outermost layer, so one rerun multiplies the inner layers' attempt counts once more.",
-    attemptsLabel: "Rerun attempts",
+      "前几层都未能挽救：执行器以 model_error 结束——内层重试全部耗尽，或流在已开始交付输出后才断开（此时重放不安全，只能整体重跑）。",
+    skips: "额度耗尽已由池切换配置处理，此处不会重跑；当任务处于暂停 / 中止 / 收尾状态时立即让出，不消耗退避时间。",
+    desc: "从头重跑整个意图。它是最外层，因此每重跑一次都会让内层的尝试次数再翻一倍。",
+    attemptsLabel: "重跑次数",
     defAttempts: 2,
-    defInterval: "Fixed 3s",
-    offHint: "-1 = no rerun; the intent is marked blocked outright",
+    defInterval: "固定 3s",
+    offHint: "-1 = 不重跑，意图直接标记为阻塞",
   },
 } satisfies Record<string, LayerMeta>;
 
@@ -188,11 +188,11 @@ export function RetryRuleFields({
         </div>
         {/* Which errors reach this layer, down to status codes — if the knobs seem to have no effect, the error most likely does not land on this layer at all. */}
         <p className="text-muted-foreground text-xs">
-          <span className="font-medium text-foreground">Triggers</span>: {meta.trigger}
+          <span className="font-medium text-foreground">触发条件</span>: {meta.trigger}
         </p>
         {!compact && meta.skips && (
           <p className="text-muted-foreground text-xs">
-            <span className="font-medium text-foreground">Skipped here</span>: {meta.skips}
+            <span className="font-medium text-foreground">此层跳过</span>: {meta.skips}
           </p>
         )}
         {!compact && <p className="text-muted-foreground text-xs">{meta.desc}</p>}
@@ -206,25 +206,25 @@ export function RetryRuleFields({
             id={`${idPrefix}-${layer}-n`}
             min={-1}
             value={value.attempts}
-            placeholder={`Default ${meta.defAttempts}`}
+            placeholder={`默认 ${meta.defAttempts}`}
             onChange={(n) => onChange({ ...value, attempts: n })}
           />
         </div>
         <div className="flex items-center gap-2">
           <Label htmlFor={`${idPrefix}-${layer}-ms`} className="text-muted-foreground text-xs">
-            Interval ms
+            间隔 ms
           </Label>
           <NumField
             id={`${idPrefix}-${layer}-ms`}
             min={0}
             value={value.interval_ms}
-            placeholder="Default backoff"
+            placeholder="默认退避"
             onChange={(n) => onChange({ ...value, interval_ms: n })}
           />
-          <span className="text-muted-foreground text-xs">{human ? `Fixed ${human}` : meta.defInterval}</span>
+          <span className="text-muted-foreground text-xs">{human ? `固定 ${human}` : meta.defInterval}</span>
         </div>
       </div>
-      {!compact && <p className="text-muted-foreground text-xs">Empty = use the default; {meta.offHint}.</p>}
+      {!compact && <p className="text-muted-foreground text-xs">留空 = 使用默认值；{meta.offHint}。</p>}
     </div>
   );
 }
@@ -240,10 +240,9 @@ export function ProfileRetryFields({
   return (
     <div className="grid gap-3 rounded-lg border p-3">
       <div className="grid gap-0.5">
-        <Label className="text-sm">Retry overrides</Label>
+        <Label className="text-sm">重试覆盖</Label>
         <p className="text-muted-foreground text-xs">
-          Applies only to this profile, overriding the global defaults from "Retry & backoff". Each field left empty = follow the global; attempts -1 = disable this layer;
-          a filled interval replaces the exponential backoff with a fixed one. The breaker and intent rerun are process-level and can only be tuned on the global page.
+          仅对此配置生效，覆盖「重试与退避」中的全局默认值。字段留空 = 跟随全局；次数为 -1 = 禁用该层；填写间隔则以固定间隔替代指数退避。熔断与意图重跑为进程级，只能在全局页面调整。
         </p>
       </div>
       {(["connect", "empty", "stream"] as const).map((k) => (
@@ -273,7 +272,7 @@ export function RetryPolicyPanel() {
       const p = await api.llmRetryPolicy();
       setPolicy({ ...ZERO_POLICY, ...p });
     } catch (e) {
-      toast.error(`Failed to load retry policy: ${(e as Error).message}`);
+      toast.error(`加载重试策略失败：${(e as Error).message}`);
     } finally {
       setLoading(false);
     }
@@ -290,9 +289,9 @@ export function RetryPolicyPanel() {
       // The backend clamps out-of-range values back into the interval and returns them; refresh straight from the reply so what you see is what is stored.
       const saved = await api.saveLLMRetryPolicy(policy);
       setPolicy({ ...ZERO_POLICY, ...saved });
-      toast.success("Saved; takes effect immediately (calls already in flight still use the old parameters)");
+      toast.success("已保存，立即生效（正在进行中的调用仍使用旧参数）");
     } catch (e) {
-      toast.error(`Save failed: ${(e as Error).message}`);
+      toast.error(`保存失败：${(e as Error).message}`);
     } finally {
       setSaving(false);
     }
@@ -303,7 +302,7 @@ export function RetryPolicyPanel() {
   if (loading) {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-dashed p-10 text-muted-foreground text-sm">
-        <Loader2Icon className="size-4 animate-spin" /> Loading retry policy…
+        <Loader2Icon className="size-4 animate-spin" /> 正在加载重试策略…
       </div>
     );
   }
@@ -311,12 +310,12 @@ export function RetryPolicyPanel() {
   return (
     <div className="grid gap-4">
       <div className="rounded-lg border bg-muted/30 p-3 text-muted-foreground text-xs leading-relaxed">
-        A failed model call passes through five retry layers in turn, innermost to outermost:
-        <span className="text-foreground"> connect → empty response → same-provider safe window → pool breaker → intent rerun</span>
-        . An outer layer only gets what the inner ones exhausted, so the attempt counts
-        <span className="text-foreground">multiply</span>
-        — max out every layer and a single hiccup can burn dozens of requests.
-        Leaving everything empty keeps the current defaults, identical to the behavior before this page existed. The first three layers can be overridden per model profile.
+        模型调用失败后会依次经过五层重试，由内到外依次为：
+        <span className="text-foreground"> 连接 → 空响应 → 同供应商安全窗口 → 池熔断 → 意图重跑</span>
+        。外层只处理内层耗尽后的失败，因此各层尝试次数会
+        <span className="text-foreground">相乘</span>
+        ——每层都调到最大，一次小故障就可能消耗数十个请求。
+        全部留空则保持当前默认值，与本页面出现之前的行为一致。前三层可按模型配置单独覆盖。
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -328,10 +327,10 @@ export function RetryPolicyPanel() {
       <div className="flex gap-2">
         <Button onClick={save} disabled={saving}>
           {saving ? <Loader2Icon className="animate-spin" /> : <SaveIcon />}
-          Save
+          保存
         </Button>
         <Button variant="outline" onClick={() => setPolicy(ZERO_POLICY)} disabled={saving}>
-          Reset all to defaults
+          全部重置为默认值
         </Button>
       </div>
     </div>
