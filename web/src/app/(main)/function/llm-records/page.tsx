@@ -109,7 +109,7 @@ function CopyButton({ text }: { text: string }) {
       size="icon"
       className="size-5 shrink-0"
       disabled={disabled}
-      title={copied ? "Copied" : "Copy content"}
+      title={copied ? "已复制" : "复制内容"}
       onClick={copy}
     >
       {copied ? <CheckIcon className="size-3 text-emerald-600" /> : <CopyIcon className="size-3" />}
@@ -267,7 +267,7 @@ export default function LLMRecordsPage() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <RadioIcon className="h-5 w-5 text-muted-foreground" />
-          <h1 className="text-xl font-semibold tracking-tight">LLM recording</h1>
+          <h1 className="text-xl font-semibold tracking-tight">LLM 调用记录</h1>
           <Badge variant="secondary">{total}</Badge>
         </div>
       </div>
@@ -277,7 +277,7 @@ export default function LLMRecordsPage() {
         <div className="relative max-w-sm flex-1">
           <SearchIcon className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search Session ID..."
+            placeholder="搜索会话 ID…"
             value={session}
             onChange={(e) => setSession(e.target.value)}
             className="h-8 pl-8"
@@ -291,12 +291,12 @@ export default function LLMRecordsPage() {
         />
         <Select value={pickedTask} onValueChange={setPickedTask}>
           <SelectTrigger size="sm" className="w-56">
-            <SelectValue placeholder="Select a task…" />
+            <SelectValue placeholder="选择任务…" />
           </SelectTrigger>
           <SelectContent>
             {tasks.length === 0 ? (
               <SelectItem value="__none__" disabled>
-                No task records yet
+                暂无任务记录
               </SelectItem>
             ) : (
               tasks.map((t) => (
@@ -313,11 +313,11 @@ export default function LLMRecordsPage() {
           size="sm"
           className="h-8"
           disabled={!pickedTask || deleting}
-          title={pickedTask ? undefined : "Select a task above first"}
+          title={pickedTask ? undefined : "请先在上方选择任务"}
           onClick={() => setDeleteOpen(true)}
         >
           <Trash2Icon className="size-3.5" />
-          Delete task conversations
+          删除任务对话
         </Button>
         <Select value={String(size)} onValueChange={(v) => setSize(Number(v))}>
           <SelectTrigger size="sm" className="w-28">
@@ -348,7 +348,7 @@ export default function LLMRecordsPage() {
               recEnabled ? "text-foreground" : "text-muted-foreground",
             )}
           >
-            {recEnabled ? "Recording" : "Off"}
+            {recEnabled ? "记录中" : "已禁用"}
           </label>
         </div>
 
@@ -390,9 +390,9 @@ export default function LLMRecordsPage() {
                   <TableHead className="w-[130px]">时间</TableHead>
                   <TableHead className="w-[60px]">任务</TableHead>
                   <TableHead className="w-[90px]">执行器</TableHead>
-                  <TableHead className="w-[100px]">Profile</TableHead>
+                  <TableHead className="w-[100px]">配置</TableHead>
                   <TableHead className="w-[140px]">模型</TableHead>
-                  <TableHead className="w-[70px]">Latency</TableHead>
+                  <TableHead className="w-[70px]">耗时</TableHead>
                   <TableHead className="w-[90px]">Tokens</TableHead>
                   <TableHead className="w-[60px]">状态</TableHead>
                 </TableRow>
@@ -408,8 +408,8 @@ export default function LLMRecordsPage() {
                   <TableRow>
                     <TableCell colSpan={8} className="py-12 text-center text-sm text-muted-foreground">
                       {!recKnown || recEnabled
-                        ? "No LLM call records yet"
-                        : "LLM call recording is off. Turn on the Recording toggle above to start capturing calls."}
+                        ? "暂无 LLM 调用记录"
+                        : "LLM 调用记录已禁用。打开上方的记录开关即可开始记录调用。"}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -480,7 +480,7 @@ export default function LLMRecordsPage() {
               </Badge>
               {selected.task_id && (
                 <Badge variant="outline" className="text-xs font-mono">
-                  Task #{selected.task_id}
+                  任务 #{selected.task_id}
                 </Badge>
               )}
               <span className="text-xs text-muted-foreground">
@@ -501,10 +501,10 @@ export default function LLMRecordsPage() {
                 size="sm"
                 className="ml-auto h-7 shrink-0 text-xs"
                 disabled={!hasRaw}
-                title={hasRaw ? "View the raw HTTP actually exchanged with the provider" : "This record was captured before the feature launched; no raw data"}
+                title={hasRaw ? "查看与服务提供商实际交换的原始 HTTP 数据" : "此记录早于该功能上线，没有原始数据"}
                 onClick={() => setRawView((v) => !v)}
               >
-                Raw
+                原始数据
               </Button>
               <Button
                 variant="ghost"
@@ -519,7 +519,7 @@ export default function LLMRecordsPage() {
             <div className="grid min-h-0 flex-1 grid-cols-2 divide-x">
               <div className="flex min-h-0 min-w-0 flex-col">
                 <div className="flex items-center gap-2 border-b py-0.5 pr-1.5 pl-3 text-[11px] font-medium text-muted-foreground">
-                  <span>Request{showRaw && " · raw"}</span>
+                  <span>请求{showRaw && " · 原始数据"}</span>
                   <CopyButton text={reqText || ""} />
                 </div>
                 <div className="min-h-0 flex-1 overflow-auto">
@@ -530,14 +530,14 @@ export default function LLMRecordsPage() {
                     </div>
                   ) : (
                     <pre className="p-3 font-mono text-xs break-all whitespace-pre-wrap">
-                      {reqText || "(empty)"}
+                      {reqText || "（空）"}
                     </pre>
                   )}
                 </div>
               </div>
               <div className="flex min-h-0 min-w-0 flex-col">
                 <div className="flex items-center gap-2 border-b py-0.5 pr-1.5 pl-3 text-[11px] font-medium text-muted-foreground">
-                  <span>Response{showRaw && " · raw (SSE)"}</span>
+                  <span>响应{showRaw && " · 原始数据（SSE）"}</span>
                   <CopyButton text={respText || ""} />
                 </div>
                 <div className="min-h-0 flex-1 overflow-auto">
@@ -551,7 +551,7 @@ export default function LLMRecordsPage() {
                       "p-3 font-mono text-xs break-all whitespace-pre-wrap",
                       selected.status !== "ok" && "text-red-600 dark:text-red-400",
                     )}>
-                      {respText || "(empty)"}
+                      {respText || "（空）"}
                     </pre>
                   )}
                 </div>
@@ -564,9 +564,9 @@ export default function LLMRecordsPage() {
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete all LLM conversations for task "{pickedTask}"?</AlertDialogTitle>
+            <AlertDialogTitle>删除任务「{pickedTask}」的全部 LLM 对话？</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete all LLM call records for this task (including raw requests/responses). This action cannot be undone.
+              此操作将永久删除该任务的全部 LLM 调用记录（包括原始请求和响应），且无法撤销。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -579,7 +579,7 @@ export default function LLMRecordsPage() {
               disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleting ? "Deleting…" : "Confirm delete"}
+              {deleting ? "删除中…" : "确认删除"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

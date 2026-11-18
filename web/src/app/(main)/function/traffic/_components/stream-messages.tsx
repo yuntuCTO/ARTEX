@@ -22,8 +22,8 @@ function fmtBytes(n: number) {
 }
 
 function fmtDirection(direction: string) {
-  if (direction === "c2s") return "client -> server";
-  if (direction === "s2c") return "server -> client";
+  if (direction === "c2s") return "客户端 → 服务器";
+  if (direction === "s2c") return "服务器 → 客户端";
   return direction;
 }
 
@@ -53,7 +53,7 @@ function StreamMessageRow({ message }: { message: TrafficStreamMessage }) {
       .trafficBlob(message.blob)
       .then((bytes) => {
         const text = binary
-          ? `${hexDump(bytes.subarray(0, HEX_PREVIEW_BYTES))}\n(${bytes.length} bytes total)`
+          ? `${hexDump(bytes.subarray(0, HEX_PREVIEW_BYTES))}\n（共 ${bytes.length} 字节）`
           : new TextDecoder().decode(bytes);
         setFull({ loading: false, text });
       })
@@ -64,7 +64,7 @@ function StreamMessageRow({ message }: { message: TrafficStreamMessage }) {
     return (
       <div className="mx-5 my-3 space-y-1 rounded-md border border-amber-500/40 bg-amber-500/10 p-3">
         <div className="font-medium text-amber-700 text-xs dark:text-amber-400">
-          #{message.seq} Recording limit reached: later messages were not stored
+          #{message.seq} 已达到记录上限，后续消息未保存
         </div>
         <pre className={payloadClass}>{message.payload}</pre>
       </div>
@@ -78,7 +78,7 @@ function StreamMessageRow({ message }: { message: TrafficStreamMessage }) {
         <Badge variant="outline">{fmtDirection(message.direction)}</Badge>
         <Badge variant="secondary">{message.type}</Badge>
         {binary && message.encoding === "base64" && <Badge variant="outline">base64</Badge>}
-        {message.truncated && <Badge variant="destructive">truncated</Badge>}
+        {message.truncated && <Badge variant="destructive">已截断</Badge>}
         {message.event && <span className="font-mono">event: {message.event}</span>}
         {message.event_id && <span className="font-mono">id: {message.event_id}</span>}
         {message.retry ? <span className="font-mono">retry: {message.retry}</span> : null}
@@ -93,7 +93,7 @@ function StreamMessageRow({ message }: { message: TrafficStreamMessage }) {
           {!full?.text && (
             <Button variant="outline" size="xs" disabled={full?.loading} onClick={loadFull}>
               {full?.loading && <Loader2Icon className="animate-spin" />}
-              Load full payload
+              加载完整载荷
             </Button>
           )}
           {full?.error && <span className="text-destructive">{full.error}</span>}
@@ -153,7 +153,7 @@ export function StreamMessagesPanel({ exchangeId, kind }: { exchangeId: string; 
     <div className="flex flex-col">
       <div className="flex items-center gap-2 px-5 py-3 text-muted-foreground text-xs">
         <span>
-          {kind === "websocket" ? "WebSocket" : "Server-Sent Events"} · {items.length} of {total} messages
+          {kind === "websocket" ? "WebSocket" : "服务器发送事件（SSE）"} · 已加载 {items.length} 条消息，共 {total} 条
         </span>
         <Button variant="outline" size="xs" className="ml-auto" disabled={loading} onClick={() => load(0)}>
           <RefreshCwIcon className={loading ? "animate-spin" : undefined} />
@@ -169,15 +169,15 @@ export function StreamMessagesPanel({ exchangeId, kind }: { exchangeId: string; 
       return (
         <div className="flex items-center gap-2 p-5 text-muted-foreground text-xs">
           <Loader2Icon className="size-3.5 animate-spin" />
-          Loading messages…
+          正在加载消息…
         </div>
       );
     }
     if (error) {
-      return <div className="p-5 text-destructive text-xs">Failed to load messages: {error}</div>;
+      return <div className="p-5 text-destructive text-xs">加载消息失败：{error}</div>;
     }
     if (items.length === 0) {
-      return <div className="p-5 text-muted-foreground text-xs">No messages recorded for this stream.</div>;
+      return <div className="p-5 text-muted-foreground text-xs">此消息流未记录任何消息。</div>;
     }
     return (
       <>
@@ -190,7 +190,7 @@ export function StreamMessagesPanel({ exchangeId, kind }: { exchangeId: string; 
           <div className="flex justify-center p-4">
             <Button variant="outline" size="sm" disabled={loadingMore} onClick={() => load(items.length)}>
               {loadingMore && <Loader2Icon className="animate-spin" />}
-              Load more
+              加载更多
             </Button>
           </div>
         )}

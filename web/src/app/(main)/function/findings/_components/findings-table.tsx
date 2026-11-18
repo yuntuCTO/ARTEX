@@ -78,11 +78,11 @@ export const FINDING_REPORT_STATES: FindingReportState[] = [
 ];
 
 export const REPORT_STATE_META: Record<FindingReportState, { label: string; tone: Tone }> = {
-  none: { label: "Not submitted", tone: "slate" },
-  submitted: { label: "Submitted", tone: "amber" },
-  accepted: { label: "Accepted", tone: "green" },
-  rejected: { label: "Rejected", tone: "red" },
-  duplicate: { label: "Duplicate report", tone: "neutral" },
+  none: { label: "未提交", tone: "slate" },
+  submitted: { label: "已提交", tone: "amber" },
+  accepted: { label: "已接受", tone: "green" },
+  rejected: { label: "已拒绝", tone: "red" },
+  duplicate: { label: "重复报告", tone: "neutral" },
 };
 
 export function ReportStateBadge({ state }: { state?: FindingReportState }) {
@@ -102,11 +102,11 @@ export function ReportStateBadge({ state }: { state?: FindingReportState }) {
 
 // Verification outcome → label/tone, on the same tone tokens StatusBadge uses.
 export const VERIFICATION_META: Record<VerificationStatus, { label: string; tone: Tone }> = {
-  verified: { label: "Verified", tone: "green" },
-  unverified: { label: "Unverified", tone: "slate" },
-  blocked: { label: "Blocked", tone: "amber" },
-  not_assessed: { label: "Not assessed", tone: "red" },
-  false_positive: { label: "False positive", tone: "neutral" },
+  verified: { label: "已验证", tone: "green" },
+  unverified: { label: "未验证", tone: "slate" },
+  blocked: { label: "受阻", tone: "amber" },
+  not_assessed: { label: "未评估", tone: "red" },
+  false_positive: { label: "误报", tone: "neutral" },
 };
 
 // VerificationBadge shows the automated verification outcome ("Verified L3" when a
@@ -208,7 +208,7 @@ export function FindingsTable({
   activeRetests,
   onDeepen,
   onDelete,
-  selectAllLabel = "Select all on this page",
+  selectAllLabel = "选择本页全部漏洞",
 }: FindingsTableProps) {
   const selectableIds = items.map((finding) => finding.finding_id).filter((id): id is string => Boolean(id));
   const selectedCount = selectableIds.filter((id) => selectedIds.has(id)).length;
@@ -234,9 +234,9 @@ export function FindingsTable({
           <TableHead className="w-8" />
           <TableHead className="w-20">严重性</TableHead>
           <TableHead>漏洞</TableHead>
-          <TableHead className="w-44">Asset</TableHead>
+          <TableHead className="w-44">资产</TableHead>
           <TableHead className="w-28">状态</TableHead>
-          <TableHead className="w-36">Report</TableHead>
+          <TableHead className="w-36">报告</TableHead>
           <TableHead className="w-32">任务</TableHead>
           <TableHead className="w-24">时间</TableHead>
           <TableHead className="w-48">操作</TableHead>
@@ -266,7 +266,7 @@ export function FindingsTable({
                     <Checkbox
                       checked={selectedIds.has(f.finding_id)}
                       onCheckedChange={(c) => onToggleSelected(f.finding_id as string, c === true)}
-                      aria-label="Select this vulnerability"
+                      aria-label="选择此漏洞"
                     />
                   )}
                 </TableCell>
@@ -285,16 +285,16 @@ export function FindingsTable({
                         href={`/function/findings/detail?id=${f.finding_id}`}
                         onClick={(e) => e.stopPropagation()}
                         className="truncate font-medium hover:text-primary hover:underline"
-                        title="View finding details"
+                        title="查看漏洞详情"
                       >
-                        {f.name || f.vulnclass || "Uncategorized"}
+                        {f.name || f.vulnclass || "未分类"}
                       </Link>
                     ) : (
-                      <span className="truncate font-medium">{f.name || f.vulnclass || "Uncategorized"}</span>
+                      <span className="truncate font-medium">{f.name || f.vulnclass || "未分类"}</span>
                     )}
                     <span className="truncate text-xs text-muted-foreground">{f.summary}</span>
                     <div className="flex flex-wrap items-center gap-1">
-                      <Badge variant="outline">Traffic evidence: {f.traffic_count ?? 0}</Badge>
+                      <Badge variant="outline">流量证据：{f.traffic_count ?? 0}</Badge>
                       <VerificationBadge finding={f} />
                     </div>
                   </div>
@@ -378,22 +378,22 @@ export function FindingsTable({
                   <div className="flex items-center gap-1">
                     {retest ? (
                       <Button asChild size="sm" variant="ghost">
-                        <Link href={`/chat?c=${retest.conversation_id}`} title="View the retest in progress">
+                        <Link href={`/chat?c=${retest.conversation_id}`} title="查看进行中的复测">
                           <Spinner data-icon="inline-start" />
-                          Retesting
+                          复测中
                         </Link>
                       </Button>
                     ) : null}
                     {!retest && f.finding_id && !f.inherited ? (
-                      <Button size="sm" variant="ghost" onClick={() => onRetest(f)} title="Retest this vulnerability in a separate conversation">
+                      <Button size="sm" variant="ghost" onClick={() => onRetest(f)} title="在单独的对话中复测此漏洞">
                         <RotateCcwIcon data-icon="inline-start" />
-                        Retest
+                        复测
                       </Button>
                     ) : null}
                     {f.finding_id && f.task_id && (
                       <Button size="sm" variant="ghost" onClick={() => onDeepen(f)}>
                         <FlaskConicalIcon data-icon="inline-start" />
-                        Deepen
+                        深入验证
                       </Button>
                     )}
                     {f.finding_id && (
@@ -403,20 +403,20 @@ export function FindingsTable({
                             size="icon"
                             variant="ghost"
                             className="size-7 text-muted-foreground hover:text-destructive"
-                            aria-label="Delete vulnerability"
+                            aria-label="删除漏洞"
                           >
                             <Trash2Icon className="size-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Delete this vulnerability?</AlertDialogTitle>
+                            <AlertDialogTitle>删除此漏洞？</AlertDialogTitle>
                             <AlertDialogDescription className="break-words">
                               "
                               <span className="break-all">
                                 {f.name || f.vulnclass || f.summary || `#${f.finding_id}`}
                               </span>
-                              " will be permanently deleted and removed from the findings list, the task findings tab, and the exploration graph. This action cannot be undone.
+                              "将被永久删除，并从漏洞列表、任务的漏洞选项卡及探索图谱中移除。此操作无法撤销。
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -443,7 +443,7 @@ export function FindingsTable({
                             <Input
                               value={edit.name}
                               onChange={(e) => onEditChange((s) => (s ? { ...s, name: e.target.value } : s))}
-                              placeholder="Readable title; falls back to category when empty"
+                              placeholder="易于辨识的标题，留空时使用分类"
                             />
                           </div>
                           <div className="flex min-w-[10rem] flex-col gap-1">
@@ -451,7 +451,7 @@ export function FindingsTable({
                             <Input
                               value={edit.vulnclass}
                               onChange={(e) => onEditChange((s) => (s ? { ...s, vulnclass: e.target.value } : s))}
-                              placeholder="e.g. SQL Injection"
+                              placeholder="例如：SQL 注入"
                             />
                           </div>
                           <div className="flex flex-col gap-1">
@@ -473,23 +473,23 @@ export function FindingsTable({
                             </Select>
                           </div>
                           <Button size="sm" disabled={saving} onClick={() => onSave(f)}>
-                            {saving ? "Saving…" : "Save"}
+                            {saving ? "保存中…" : "保存"}
                           </Button>
                         </div>
                       )}
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <ShieldAlertIcon className="size-3.5" />
-                        Evidence
+                        证据
                         {f.vulnclass && (
                           <span>
-                            · Type:
+                            · 类型：
                             <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{f.vulnclass}</code>
                           </span>
                         )}
                         {f.param_id && <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{f.param_id}</code>}
                         {f.assets && f.assets.length > 0 && (
                           <span className="flex flex-wrap items-center gap-1">
-                            · Assets:
+                            · 资产：
                             {f.assets.map((a) => (
                               <code key={a.id} className="rounded bg-muted px-1.5 py-0.5 font-mono" title={a.type}>
                                 {a.label}
@@ -508,12 +508,12 @@ export function FindingsTable({
                           <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                             <span className="flex items-center gap-2">
                               <FileTextIcon className="size-3.5" />
-                              Detailed report
+                              详细报告
                             </span>
                             {reports[rowKey]?.status === "done" && reports[rowKey]?.text.trim() && (
                               <CopyButton
                                 text={reports[rowKey]?.text}
-                                successMessage="Detailed report copied"
+                                successMessage="已复制详细报告"
                                 variant="ghost"
                                 className="h-6 px-2 text-xs"
                               />
@@ -524,9 +524,9 @@ export function FindingsTable({
                             if (!rep || rep.status === "loading")
                               return <p className="text-xs text-muted-foreground">加载中…</p>;
                             if (rep.status === "error")
-                              return <p className="text-xs text-muted-foreground">Failed to load the report.</p>;
+                              return <p className="text-xs text-muted-foreground">加载报告失败。</p>;
                             if (!rep.text.trim())
-                              return <p className="text-xs text-muted-foreground">No detailed report yet.</p>;
+                              return <p className="text-xs text-muted-foreground">暂无详细报告。</p>;
                             return (
                               // break-words inherits into paragraphs/lists; pre additionally gets
                               // whitespace-pre-wrap so code blocks wrap too — otherwise long code lines/URLs
@@ -548,7 +548,7 @@ export function FindingsTable({
         {items.length === 0 && (
           <TableRow>
             <TableCell colSpan={COLUMN_COUNT} className="py-12 text-center text-sm text-muted-foreground">
-              No matching findings.
+              没有匹配的漏洞。
             </TableCell>
           </TableRow>
         )}
