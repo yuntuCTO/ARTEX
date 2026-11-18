@@ -8,9 +8,9 @@ export const KIND_LABEL: Record<string, string> = {
   dingtalk: "DingTalk",
   feishu: "Feishu",
   wecom: "WeCom",
-  webhook: "Generic Webhook",
+  webhook: "通用 Webhook",
   telegram: "Telegram",
-  email: "Email",
+  email: "电子邮件",
 };
 
 // Config field definitions per channel.
@@ -40,9 +40,9 @@ export const CHANNEL_FIELDS: Record<string, FieldDef[]> = {
     },
     {
       key: "secret",
-      label: "Signing secret",
+      label: "签名密钥",
       kind: "password",
-      help: "Fill in when the robot's security settings use 'Sign'; leave empty for 'Custom keywords' or when no security setting is enabled",
+      help: "机器人安全设置使用“加签”时填写；使用“自定义关键词”或未启用安全设置时留空",
     },
   ],
   feishu: [
@@ -52,7 +52,7 @@ export const CHANNEL_FIELDS: Record<string, FieldDef[]> = {
       kind: "text",
       placeholder: "https://open.feishu.cn/open-apis/bot/v2/hook/...",
     },
-    { key: "secret", label: "Signature verification secret", kind: "password", help: "Fill in when the robot enables 'Signature verification'; otherwise leave empty" },
+    { key: "secret", label: "签名校验密钥", kind: "password", help: "机器人启用“签名校验”时填写；否则留空" },
   ],
   wecom: [
     {
@@ -63,27 +63,27 @@ export const CHANNEL_FIELDS: Record<string, FieldDef[]> = {
     },
   ],
   webhook: [
-    { key: "url", label: "Target URL", kind: "text", placeholder: "https://your-endpoint.example.com/hook" },
+    { key: "url", label: "目标 URL", kind: "text", placeholder: "https://your-endpoint.example.com/hook" },
     {
       key: "method",
-      label: "HTTP method",
+      label: "HTTP 方法",
       kind: "select",
       options: [
-        { value: "POST", label: "POST (with body)" },
-        { value: "PUT", label: "PUT (with body)" },
-        { value: "PATCH", label: "PATCH (with body)" },
-        { value: "GET", label: "GET (no body)" },
+        { value: "POST", label: "POST（带请求体）" },
+        { value: "PUT", label: "PUT（带请求体）" },
+        { value: "PATCH", label: "PATCH（带请求体）" },
+        { value: "GET", label: "GET（无请求体）" },
       ],
     },
-    { key: "headers", label: "Custom headers", kind: "kv", help: "One KEY=VALUE per line, e.g. Authorization=Bearer xxx" },
+    { key: "headers", label: "自定义请求头", kind: "kv", help: "每行一个 KEY=VALUE，例如 Authorization=Bearer xxx" },
     {
       key: "body_template",
-      label: "Body template",
+      label: "请求体模板",
       kind: "textarea",
       help:
-        "Leave empty to use the built-in default template. Variables: {{.Title}} {{.Batch}} {{.Count}} {{.HomeURL}} {{.SentAt}}, " +
-        "plus .Name/.VulnClass/.Severity/.Summary/.Assets/.DetailURL/.StatusLabel under range .Items. " +
-        "Use {{json .Xxx}} instead of {{.Xxx}} to insert strings, or quotes in titles will break the JSON.",
+        "留空使用内置默认模板。变量： {{.Title}} {{.Batch}} {{.Count}} {{.HomeURL}} {{.SentAt}}, " +
+        "以及 range .Items 下的 .Name/.VulnClass/.Severity/.Summary/.Assets/.DetailURL/.StatusLabel。 " +
+        "插入字符串时请使用 {{json .Xxx}} 而非 {{.Xxx}}，否则标题中的引号会破坏 JSON。",
     },
   ],
   telegram: [
@@ -94,32 +94,32 @@ export const CHANNEL_FIELDS: Record<string, FieldDef[]> = {
       label: "API URL",
       kind: "text",
       placeholder: "https://api.telegram.org",
-      help: "Leave empty for the official URL; fill in when proxying a self-hosted Bot API",
+      help: "留空使用官方 URL；代理自托管 Bot API 时填写",
     },
   ],
   email: [
-    { key: "host", label: "SMTP server", kind: "text", placeholder: "smtp.example.com" },
+    { key: "host", label: "SMTP 服务器", kind: "text", placeholder: "smtp.example.com" },
     {
       key: "port",
-      label: "Port",
+      label: "端口",
       kind: "number",
       placeholder: "587",
-      help: "587 uses STARTTLS; for 465 turn 'Implicit TLS' on",
+      help: "587 使用 STARTTLS；465 请开启“隐式 TLS”",
     },
-    { key: "username", label: "Account", kind: "text" },
-    { key: "password", label: "Password / auth code", kind: "password" },
-    { key: "from", label: "From", kind: "text", placeholder: "artex@example.com" },
-    { key: "to", label: "Recipients", kind: "list", help: "Separate multiple addresses with commas" },
-    { key: "tls", label: "Implicit TLS", kind: "switch", help: "On for port 465; keep off for 587 (STARTTLS is automatic)" },
+    { key: "username", label: "账户", kind: "text" },
+    { key: "password", label: "密码 / 授权码", kind: "password" },
+    { key: "from", label: "发件人", kind: "text", placeholder: "artex@example.com" },
+    { key: "to", label: "收件人", kind: "list", help: "多个地址用逗号分隔" },
+    { key: "tls", label: "隐式 TLS", kind: "switch", help: "465 端口开启；587 端口保持关闭（自动使用 STARTTLS）" },
   ],
 };
 
 export const SEVERITY_OPTIONS = [
-  { value: "", label: "All severities" },
-  { value: "low", label: "Low and above" },
-  { value: "medium", label: "Medium and above" },
-  { value: "high", label: "High and above" },
-  { value: "critical", label: "Critical only" },
+  { value: "", label: "全部严重程度" },
+  { value: "low", label: "低危及以上" },
+  { value: "medium", label: "中危及以上" },
+  { value: "high", label: "高危及以上" },
+  { value: "critical", label: "仅严重" },
 ];
 
 export type ChannelForm = {
